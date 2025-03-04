@@ -1,4 +1,5 @@
-import { NullTime } from "./nullTime";
+import { NullString } from "./NullString";
+import { NullTime } from "./NullTime";
 import { ProjectMemberResponseDTO } from "./projectMember";
 
 export enum TaskPriority {
@@ -21,11 +22,11 @@ export interface TaskResponseDTO {
   id: string;
   projectId: string;
   createdBy: ProjectMemberResponseDTO;
-  UpdatedBy: ProjectMemberResponseDTO;
-  AssignedTo?: ProjectMemberResponseDTO;
+  updatedBy: ProjectMemberResponseDTO;
+  assignedTo?: ProjectMemberResponseDTO;
   title: string;
   taskNumber: string;
-  description?: string;
+  description: NullString;
   status: string;
   priority: TaskPriority;
   dueDate: NullTime;

@@ -46,3 +46,10 @@ export const formatDate = (date: string) => {
     year: "numeric",
   });
 };
+
+export const getInitials = (fullName: string) => {
+  return fullName
+    .split(" ")
+    .map((word) => word[0].toUpperCase())
+    .join("");
+};

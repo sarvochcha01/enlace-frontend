@@ -1,4 +1,4 @@
 export interface NullTime {
-  Time: string | null;
+  Time: string;
   Valid: boolean;
 }

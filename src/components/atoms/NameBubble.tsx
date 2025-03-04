@@ -1,15 +1,29 @@
 import React, { useState, useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "../../utils/tailwindMerge";
+import { getInitials } from "../../utils/utils";
 
 interface NameBubbleProps {
   name: string;
+  isFilter?: boolean;
+  isSelected?: boolean;
   zIndex?: number;
+  onClick?: () => void;
 }
 
-const NameBubble: React.FC<NameBubbleProps> = ({ name, zIndex = 1 }) => {
+const NameBubble: React.FC<NameBubbleProps> = ({
+  name,
+  isFilter = false,
+  isSelected: externalIsSelected,
+  zIndex = 1,
+  onClick,
+}) => {
   const [isHovered, setIsHovered] = useState(false);
-  const [isSelected, setIsSelected] = useState(false);
+  const [internalIsSelected, setInternalIsSelected] = useState(false);
+
+  // Use the external prop if provided, otherwise use internal state
+  const isSelected =
+    externalIsSelected !== undefined ? externalIsSelected : internalIsSelected;
 
   const colors = [
     "bg-red-500",
@@ -27,11 +41,20 @@ const NameBubble: React.FC<NameBubbleProps> = ({ name, zIndex = 1 }) => {
     return colors[Math.floor(Math.random() * colors.length)];
   }, []);
 
-  const getInitials = (fullName: string) => {
-    return fullName
-      .split(" ")
-      .map((word) => word[0].toUpperCase())
-      .join("");
+  const handleClick = () => {
+    if (!isFilter) {
+      return;
+    }
+
+    // Toggle internal state if no external control
+    if (externalIsSelected === undefined) {
+      setInternalIsSelected(!internalIsSelected);
+    }
+
+    // Call the onClick handler if provided
+    if (onClick) {
+      onClick();
+    }
   };
 
   return (
@@ -40,13 +63,14 @@ const NameBubble: React.FC<NameBubbleProps> = ({ name, zIndex = 1 }) => {
       style={{ zIndex: isHovered || isSelected ? zIndex + 1 : zIndex }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={() => setIsSelected(!isSelected)}
+      onClick={handleClick}
     >
       <div
         className={cn(
-          "w-10 h-10 flex items-center justify-center rounded-full  text-white font-bold hover:cursor-pointer",
+          "w-10 h-10  flex items-center justify-center rounded-full text-white  hover:cursor-pointer",
           randomColor,
-          isSelected ? "border-primary border-[3px]" : "border-white border-2"
+          isSelected ? "border-primary border-[3px]" : "border-white border-2",
+          !isFilter && "w-6 h-6 text-xs"
         )}
       >
         {getInitials(name)}
@@ -54,10 +78,13 @@ const NameBubble: React.FC<NameBubbleProps> = ({ name, zIndex = 1 }) => {
       <AnimatePresence>
         {isHovered && (
           <motion.div
-            className="absolute text-xs top-12 bg-gray-700 text-white px-2 py-1 rounded whitespace-nowrap"
-            initial={{ opacity: 0, y: -10 }}
+            className={cn(
+              "absolute text-xs top-12 bg-gray-700 text-white px-2 py-1 rounded whitespace-nowrap",
+              !isFilter && "-top-6"
+            )}
+            initial={{ opacity: 0, y: isFilter ? -12 : 6 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -5 }}
+            exit={{ opacity: 0, y: isFilter ? 12 : -6 }}
             transition={{ duration: 0.15 }}
           >
             {name}

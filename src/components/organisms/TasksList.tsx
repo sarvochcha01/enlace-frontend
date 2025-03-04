@@ -15,7 +15,7 @@ interface TasksListProps {
 const TasksList: React.FC<TasksListProps> = ({ title, children }) => {
   const { projectId } = useParams<{ projectId: string }>();
 
-  const { openTaskModal, closeTaskModal } = useTaskModal();
+  const { openTaskModal } = useTaskModal();
 
   return (
     <div className="flex flex-col shrink-0 w-64  relative border-2 border-gray-200 rounded-lg">

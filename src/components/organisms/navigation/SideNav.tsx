@@ -5,8 +5,12 @@ import { motion } from "framer-motion";
 const SideNav = () => {
   const sideNavVariants = {
     hidden: { x: -80, opacity: 0 },
-    visible: { x: 0, opacity: 1, transition: { type: "tween", duration: 0.3 } },
-    exit: { x: -80, opacity: 0, transition: { type: "tween", duration: 0.2 } },
+    visible: {
+      x: 0,
+      opacity: 1,
+      transition: { type: "tween", duration: 0.15 },
+    },
+    exit: { x: -80, opacity: 0, transition: { type: "tween", duration: 0.15 } },
   };
 
   return (
