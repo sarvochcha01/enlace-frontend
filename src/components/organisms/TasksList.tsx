@@ -13,8 +13,8 @@ const TasksList: React.FC<TasksListProps> = ({ title, children }) => {
   const { openTaskModal } = useTaskModal();
 
   return (
-    <div className="flex flex-col shrink-0 w-64  relative border-2 border-gray-200 rounded-lg">
-      <div className="bg-primary text-white p-3 font-medium sticky top-0 w-full  z-50 rounded-t-lg border-gray-200 flex justify-between items-center">
+    <div className="flex w-64 shrink-0 flex-col relative">
+      <div className="bg-primary text-white h-10 rounded-t-xl flex justify-between px-2 items-center sticky  top-0 w-full ">
         <span className=" font-semibold">{title}</span>
         <span className="bg-gray-100 text-gray-600 text-xs font-medium px-2 py-1 rounded-full">
           {children && React.Children.count(children) > 0
@@ -22,11 +22,11 @@ const TasksList: React.FC<TasksListProps> = ({ title, children }) => {
             : 0}
         </span>
       </div>
-      <div className="flex flex-col gap-2 p-2 bg-gray-100 h-full">
+
+      <div className="border h-full bg-gray-100 p-2 flex flex-col gap-2">
         {React.Children.count(children) > 0
           ? children
           : "No tasks yet. Click the 'Add Task' button to add a task."}
-
         <div className="flex justify-center items-center p-2 rounded-lg cursor-pointer">
           <ButtonWithIcon
             bg="no-bg"

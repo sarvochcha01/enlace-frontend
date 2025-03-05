@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useToast } from "../../hooks/useToast";
 import { motion } from "framer-motion";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { TaskDTO } from "../../models/task";
+import { TaskDTO, TaskResponseDTO } from "../../models/task";
 import InputField from "../atoms/InputField";
 import TextAreaField from "../atoms/TextAreaField";
 import { useTaskModal } from "../../hooks/useTaskModal";
@@ -11,19 +11,25 @@ import { useProject } from "../../hooks/useProject";
 import ButtonWithIcon from "../atoms/ButtonWithIcon";
 import { Check, X } from "lucide-react";
 import { TaskService } from "../../services/TaskService";
+import { useProjectMember } from "../../hooks/useProjectMember";
+import { formatDate, formatDateAndTime } from "../../utils/utils";
 
-interface CreateTaskModalProps {
+interface TaskModalProps {
   closeModal: () => void;
 }
 
-const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ closeModal }) => {
+const TaskModal: React.FC<TaskModalProps> = ({ closeModal }) => {
   const { showToast } = useToast();
   const { project } = useProject();
   const { modalMode, taskId } = useTaskModal();
+  const { projectMemberId } = useProjectMember();
 
   const [isCreatingTask, setIsCreatingTask] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [originalData, setOriginalData] = useState<TaskDTO | null>(null);
+
+  const [taskData, setTaskData] = useState<TaskResponseDTO | null>(null);
+
+  const [editableData, setEditableData] = useState<TaskDTO | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
 
   const {
@@ -40,7 +46,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ closeModal }) => {
   const formValues = watch();
 
   useEffect(() => {
-    if (originalData && modalMode === "display") {
+    if (editableData && modalMode === "display") {
       const normalizeData = (data: TaskDTO) => ({
         ...data,
         assignedTo: data.assignedTo || "", // Ensure consistent default
@@ -48,12 +54,12 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ closeModal }) => {
       });
 
       const isChanged =
-        JSON.stringify(normalizeData(originalData)) !==
+        JSON.stringify(normalizeData(editableData)) !==
         JSON.stringify(normalizeData(formValues));
 
       setHasChanges(isChanged);
     }
-  }, [formValues, originalData, modalMode]);
+  }, [formValues, editableData, modalMode]);
 
   const handleTaskSubmit: SubmitHandler<TaskDTO> = async (data) => {
     setIsCreatingTask(true);
@@ -66,7 +72,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ closeModal }) => {
         console.log("Updating task:", data);
         await TaskService.updateTask(taskId!, data, project!.id);
         showToast("Task updated successfully", { type: "success" });
-        setOriginalData(data);
+        setEditableData(data);
       }
       reset();
       closeModal();
@@ -83,13 +89,30 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ closeModal }) => {
     }
   };
 
+  const handleTaskDelete = async () => {
+    setIsCreatingTask(true);
+    try {
+      console.log("Deleting task:", taskId);
+      await TaskService.deleteTask(taskId!, project!.id);
+      showToast("Task deleted successfully", { type: "success" });
+      closeModal();
+    } catch (error) {
+      console.error("Error deleting task:", error);
+      showToast("Error deleting task", { type: "error" });
+    } finally {
+      setIsCreatingTask(false);
+    }
+  };
+
   const getTask = async () => {
     setIsLoading(true);
     try {
       const task = await TaskService.getTask(taskId!, project!.id);
+      console.log("Task data:", task);
+      setTaskData(task);
 
       // Create a consistent object structure for comparison
-      const taskData: TaskDTO = {
+      const editableTaskData: TaskDTO = {
         title: task.title,
         description: task.description,
         assignedTo: task.assignedTo?.id || "",
@@ -99,16 +122,14 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ closeModal }) => {
       };
 
       // Set form values
-      setValue("title", taskData.title);
-      setValue("description", taskData.description);
-      setValue("assignedTo", taskData.assignedTo);
-      setValue("dueDate", taskData.dueDate?.split("T")[0] ?? "");
-      setValue("priority", taskData.priority);
-      setValue("status", taskData.status);
+      setValue("title", editableTaskData.title);
+      setValue("description", editableTaskData.description);
+      setValue("assignedTo", editableTaskData.assignedTo);
+      setValue("dueDate", editableTaskData.dueDate?.split("T")[0] ?? "");
+      setValue("priority", editableTaskData.priority);
+      setValue("status", editableTaskData.status);
 
-      // Store original data for comparison
-      setOriginalData(taskData);
-      console.log("Task loaded:", taskData);
+      setEditableData(editableTaskData);
     } catch (error) {
       console.error("Error fetching task:", error);
       showToast("Error loading task details", { type: "error" });
@@ -137,7 +158,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ closeModal }) => {
       ></div>
 
       <motion.div
-        className="bg-white rounded-lg p-6 w-[1200px] h-[600px] relative z-50 overflow-auto flex flex-col  "
+        className="bg-white rounded-lg p-6 w-[1200px] h-[650px] relative z-50 overflow-auto flex flex-col  "
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 20, opacity: 0 }}
@@ -179,64 +200,101 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ closeModal }) => {
                   helperText="Optional: Add a description to the task"
                 />
               </div>
-              <div className="w-1/3 flex flex-col gap-4 border border-gray-400 p-2 rounded">
-                <Dropdown
-                  label="Assigned To"
-                  options={{
-                    "": "Unassigned",
-                    ...Object.fromEntries(
-                      project!.projectMembers.map((member) => [
-                        member.id,
-                        member.name,
-                      ])
-                    ),
-                  }}
-                  id="assignedTo"
-                  error={errors.assignedTo?.message}
-                  register={register}
-                  flexDir="row"
-                />
-                <InputField
-                  label="Due Date"
-                  id="dueDate"
-                  type="date"
-                  error={errors.dueDate?.message}
-                  register={register}
-                  flexDir="row"
-                />
+              <div className="flex flex-col gap-4 w-1/3">
+                <div className=" flex flex-col gap-4 border border-gray-400 p-2 rounded">
+                  <Dropdown
+                    label="Assigned To"
+                    options={{
+                      "": "Unassigned",
+                      ...Object.fromEntries(
+                        project!.projectMembers.map((member) => [
+                          member.id,
+                          member.name,
+                        ])
+                      ),
+                    }}
+                    id="assignedTo"
+                    error={errors.assignedTo?.message}
+                    register={register}
+                    flexDir="row"
+                  />
+                  <InputField
+                    label="Due Date"
+                    id="dueDate"
+                    type="date"
+                    error={errors.dueDate?.message}
+                    register={register}
+                    flexDir="row"
+                  />
 
-                <Dropdown
-                  label="Priority"
-                  options={{
-                    low: "Low",
-                    medium: "Medium",
-                    high: "High",
-                    critical: "Critical",
-                  }}
-                  id="priority"
-                  error={errors.priority?.message}
-                  register={register}
-                  validation={{
-                    required: "Priority is required",
-                  }}
-                  flexDir="row"
-                />
+                  <Dropdown
+                    label="Priority"
+                    options={{
+                      low: "Low",
+                      medium: "Medium",
+                      high: "High",
+                      critical: "Critical",
+                    }}
+                    id="priority"
+                    error={errors.priority?.message}
+                    register={register}
+                    validation={{
+                      required: "Priority is required",
+                    }}
+                    flexDir="row"
+                  />
 
-                <Dropdown
-                  label="Status"
-                  options={{
-                    todo: "To Do",
-                    "in-progress": "In Progress",
-                    completed: "Completed",
-                  }}
-                  id="status"
-                  error={errors.status?.message}
-                  register={register}
-                  validation={{
-                    required: "Status is required",
-                  }}
-                  flexDir="row"
-                />
+                  <Dropdown
+                    label="Status"
+                    options={{
+                      todo: "To Do",
+                      "in-progress": "In Progress",
+                      completed: "Completed",
+                    }}
+                    id="status"
+                    error={errors.status?.message}
+                    register={register}
+                    validation={{
+                      required: "Status is required",
+                    }}
+                    flexDir="row"
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <div className="flex w-full justify-between">
+                    <div className="text-sm text-gray-500">Task Number</div>
+                    <div className="text-lg font-bold text-gray-800">
+                      {taskData?.taskNumber}
+                    </div>
+                  </div>
+
+                  <div className="flex w-full justify-between">
+                    <div className="text-sm text-gray-500">Created By</div>
+                    <div className="text-lg font-bold text-gray-800">
+                      {taskData?.createdBy.name}
+                    </div>
+                  </div>
+
+                  <div className="flex w-full justify-between">
+                    <div className="text-sm text-gray-500">Created At</div>
+                    <div className="text-lg font-bold text-gray-800">
+                      {formatDateAndTime(taskData?.createdAt!)}
+                    </div>
+                  </div>
+                  <div className="flex w-full justify-between">
+                    <div className="text-sm text-gray-500">Updated By</div>
+                    <div className="text-lg font-bold text-gray-800">
+                      {taskData?.updatedBy.name}
+                    </div>
+                  </div>
+
+                  <div className="flex w-full justify-between">
+                    <div className="text-sm text-gray-500">Updated At</div>
+                    <div className="text-lg font-bold text-gray-800">
+                      {formatDateAndTime(taskData?.updatedAt!)}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -266,6 +324,14 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ closeModal }) => {
                   // bg={hasChanges ? "default" : "gray"}
                 />
               )}
+              {taskData?.createdBy.id === projectMemberId && (
+                <ButtonWithIcon
+                  icon={<Check size={20} />}
+                  text="Delete Task"
+                  type="button"
+                  onClick={handleTaskDelete}
+                />
+              )}
               {modalMode === "display" && hasChanges && (
                 <div className="text-xs text-red-500 absolute bottom-4 right-4">
                   * Unsaved changes
@@ -279,4 +345,4 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ closeModal }) => {
   );
 };
 
-export default CreateTaskModal;
+export default TaskModal;

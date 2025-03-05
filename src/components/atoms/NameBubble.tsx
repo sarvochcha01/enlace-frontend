@@ -5,7 +5,7 @@ import { getInitials } from "../../utils/utils";
 
 interface NameBubbleProps {
   name: string;
-  isFilter?: boolean;
+  setIsSelected?: React.Dispatch<React.SetStateAction<boolean>>;
   isSelected?: boolean;
   zIndex?: number;
   onClick?: () => void;
@@ -13,16 +13,12 @@ interface NameBubbleProps {
 
 const NameBubble: React.FC<NameBubbleProps> = ({
   name,
-  isFilter = false,
-  isSelected: externalIsSelected,
+  isSelected,
+  setIsSelected,
   zIndex = 1,
   onClick,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const [internalIsSelected, setInternalIsSelected] = useState(false);
-
-  const isSelected =
-    externalIsSelected !== undefined ? externalIsSelected : internalIsSelected;
 
   const colors = [
     "bg-red-500",
@@ -41,13 +37,7 @@ const NameBubble: React.FC<NameBubbleProps> = ({
   }, []);
 
   const handleClick = () => {
-    if (!isFilter) {
-      return;
-    }
-
-    if (externalIsSelected === undefined) {
-      setInternalIsSelected(!internalIsSelected);
-    }
+    setIsSelected && setIsSelected((prev) => !prev);
 
     if (onClick) {
       onClick();
@@ -56,7 +46,8 @@ const NameBubble: React.FC<NameBubbleProps> = ({
 
   return (
     <div
-      className="relative flex flex-col items-center"
+      className="relative flex flex-col items-center z-10"
+      style={{ zIndex: isHovered || isSelected ? zIndex + 1 : zIndex }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleClick}
@@ -65,8 +56,7 @@ const NameBubble: React.FC<NameBubbleProps> = ({
         className={cn(
           "w-10 h-10  flex items-center justify-center rounded-full text-white  hover:cursor-pointer",
           randomColor,
-          isSelected ? "border-primary border-[3px]" : "border-white border-2",
-          !isFilter && "w-6 h-6 text-xs"
+          isSelected ? "border-primary border-[3px]" : "border-white border-2"
         )}
       >
         {getInitials(name)}
@@ -74,14 +64,12 @@ const NameBubble: React.FC<NameBubbleProps> = ({
       <AnimatePresence>
         {isHovered && (
           <motion.div
-            style={{ zIndex: 9999 }}
             className={cn(
-              "absolute text-xs top-12 bg-gray-700 text-white px-2 py-1 rounded whitespace-nowrap",
-              !isFilter && "-top-6"
+              "absolute text-xs top-12 bg-gray-700 text-white px-2 py-1 rounded whitespace-nowrap"
             )}
-            initial={{ opacity: 0, y: isFilter ? -12 : 6 }}
+            initial={{ opacity: 0, y: -12 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: isFilter ? 12 : -6 }}
+            exit={{ opacity: 0, y: 12 }}
             transition={{ duration: 0.15 }}
           >
             {name}

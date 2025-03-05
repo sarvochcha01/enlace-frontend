@@ -28,4 +28,6 @@ export interface TaskResponseDTO {
   status: string;
   priority: TaskPriority;
   dueDate: string;
+  createdAt: string;
+  updatedAt: string;
 }

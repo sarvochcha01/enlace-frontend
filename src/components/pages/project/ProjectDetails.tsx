@@ -11,11 +11,14 @@ import { formatDate } from "../../../utils/utils";
 import ButtonWithIcon from "../../atoms/ButtonWithIcon";
 import { Plus } from "lucide-react";
 import { useTaskModal } from "../../../hooks/useTaskModal";
-import CreateTaskModal from "../../modals/CreateTaskModal";
+import TaskModal from "../../modals/TaskModal";
 import { AnimatePresence } from "framer-motion";
 import { useProject } from "../../../hooks/useProject";
 import { TaskResponseDTO } from "../../../models/task";
 import { ProjectFilters } from "../../../models/ProjectFilters";
+import { useAuth } from "../../../hooks/auth/useAuth";
+import { useProjectMember } from "../../../hooks/useProjectMember";
+import { ProjectMemberService } from "../../../services/ProjectMemberService";
 
 const ProjectDetails = () => {
   const { projectId } = useParams<{ projectId: string }>();
@@ -24,13 +27,14 @@ const ProjectDetails = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-  const [assigneeFilter, setAssigneeFilter] = useState("");
+  const [assignedToFilter, setAssignedToFilter] = useState("");
 
   const [filters, setFilters] = useState<ProjectFilters | null>(null);
   const [filteredTasks, setFilteredTasks] = useState<TaskResponseDTO[] | null>(
     null
   );
 
+  const { setProjectMemberId } = useProjectMember();
   const { project, setProject } = useProject();
   const { showToast } = useToast();
   const { isTaskModalOpen, openTaskModal, closeTaskModal } = useTaskModal();
@@ -48,9 +52,13 @@ const ProjectDetails = () => {
 
     setIsLoading(true);
     try {
-      const res = await ProjectService.getProject(projectId);
-      console.log(res);
-      setProject(res);
+      const projectRes = await ProjectService.getProject(projectId);
+      const projectMemberRes = await ProjectMemberService.getProjectMember(
+        projectId
+      );
+
+      setProjectMemberId(projectMemberRes.id);
+      setProject(projectRes);
     } catch (error) {
       showToast("Error fetching project details", { type: "error" });
       navigate("/projects");
@@ -85,22 +93,22 @@ const ProjectDetails = () => {
   useEffect(() => {
     const filterSettings: ProjectFilters = {
       search: searchQuery,
-      assignedTo: assigneeFilter,
+      assignedTo: assignedToFilter,
     };
     setFilters(filterSettings);
-  }, [searchQuery, statusFilter, assigneeFilter, setFilters]);
+  }, [searchQuery, statusFilter, assignedToFilter, setFilters]);
 
   const clearFilters = () => {
     setSearchQuery("");
     setStatusFilter("");
-    setAssigneeFilter("");
+    setAssignedToFilter("");
   };
 
   const toggleAssigneeFilter = (memberId: string) => {
-    if (assigneeFilter === memberId) {
-      setAssigneeFilter("");
+    if (assignedToFilter === memberId) {
+      setAssignedToFilter("");
     } else {
-      setAssigneeFilter(memberId);
+      setAssignedToFilter(memberId);
     }
   };
 
@@ -138,8 +146,7 @@ const ProjectDetails = () => {
                   key={member.id}
                   name={member.name}
                   zIndex={arr.length - index}
-                  isFilter={true}
-                  isSelected={assigneeFilter === member.id}
+                  isSelected={assignedToFilter === member.id}
                   onClick={() => toggleAssigneeFilter(member.id)}
                 />
               ))}
@@ -156,7 +163,7 @@ const ProjectDetails = () => {
         </div>
       </div>
 
-      <div className="h-full w-full overflow-x-auto mt-4">
+      <div className="h-full w-full overflow-x-auto mt-4 ">
         <div className="flex gap-2 min-h-full pb-8">
           <TasksList title="To Do" status="todo">
             {(filteredTasks || project?.tasks)
@@ -213,7 +220,7 @@ const ProjectDetails = () => {
 
       <AnimatePresence>
         {isTaskModalOpen && (
-          <CreateTaskModal
+          <TaskModal
             closeModal={() => {
               closeTaskModal();
               fetchProjectDetails();

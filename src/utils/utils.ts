@@ -47,6 +47,18 @@ export const formatDate = (date: string) => {
   });
 };
 
+export const formatDateAndTime = (date: string) => {
+  if (!date) return "";
+
+  return new Date(date).toLocaleString("en-US", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+  });
+};
+
 export const getInitials = (fullName: string) => {
   return fullName
     .split(" ")

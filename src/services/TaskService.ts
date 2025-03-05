@@ -50,7 +50,6 @@ export class TaskService {
       }
     );
 
-    console.log(res.data);
     return res.data;
   };
 
@@ -76,6 +75,29 @@ export class TaskService {
     const res = await axios.put(
       `${baseUrl}/projects/${projectId}/tasks/${taskId}`,
       requestBody,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    console.log(res.data);
+    return res.data;
+  };
+
+  static deleteTask = async (
+    taskId: string,
+    projectId: string
+  ): Promise<void> => {
+    const token = await getIdToken();
+
+    if (!token) {
+      throw new Error("No authentication token available. Please log in.");
+    }
+
+    console.log("Deleting task:", taskId);
+
+    const res = await axios.delete(
+      `${baseUrl}/projects/${projectId}/tasks/${taskId}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }

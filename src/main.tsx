@@ -22,6 +22,7 @@ import { ToastProvider } from "./context/ToastContext.tsx";
 import ProjectDetails from "./components/pages/project/ProjectDetails.tsx";
 import { TaskModalProvider } from "./context/TaskModalContext.tsx";
 import { ProjectProvider } from "./context/ProjectContext.tsx";
+import { ProjectMemberProvider } from "./context/ProjectMemberContext.tsx";
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const { user, loading } = useAuth();
@@ -55,9 +56,11 @@ const router = createBrowserRouter(
         <Route
           path="projects/:projectId"
           element={
-            <TaskModalProvider>
-              <ProjectDetails />
-            </TaskModalProvider>
+            <ProjectMemberProvider>
+              <TaskModalProvider>
+                <ProjectDetails />
+              </TaskModalProvider>
+            </ProjectMemberProvider>
           }
         />
         <Route path="settings" element={<Settings />} />

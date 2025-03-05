@@ -2,6 +2,7 @@ import { Clock } from "lucide-react";
 import { useTaskModal } from "../../hooks/useTaskModal";
 import { TaskPriority } from "../../models/task";
 import NameBubble from "./NameBubble";
+import { getInitials } from "../../utils/utils";
 
 interface TaskHeadingCardProps {
   id: string;
@@ -36,7 +37,7 @@ const TaskHeadingCard: React.FC<TaskHeadingCardProps> = ({
 
   return (
     <button
-      className="w-full bg-white p-3 rounded-lg border border-gray-200 shadow-sm hover:shadow transition-shadow cursor-pointer"
+      className="w-full bg-white p-3 rounded-lg border border-gray-200 shadow-sm hover:shadow transition-shadow cursor-pointer "
       onClick={() => openTaskModal("display", id)}
     >
       <div className="flex justify-between items-start mb-2">
@@ -53,12 +54,9 @@ const TaskHeadingCard: React.FC<TaskHeadingCardProps> = ({
           <span>{dueDate}</span>
         </div>
         {assignee && (
-          <NameBubble
-            isFilter={false}
-            name={assignee}
-            isSelected={false}
-            zIndex={1}
-          />
+          <div className="w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center">
+            {getInitials(assignee)}
+          </div>
         )}
       </div>
     </button>
