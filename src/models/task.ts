@@ -1,5 +1,3 @@
-import { NullString } from "./NullString";
-import { NullTime } from "./NullTime";
 import { ProjectMemberResponseDTO } from "./projectMember";
 
 export enum TaskPriority {
@@ -9,13 +7,13 @@ export enum TaskPriority {
   critical = "critical",
 }
 
-export interface CreateTaskDTO {
-  assignedTo?: string;
+export interface TaskDTO {
+  assignedTo: string | null;
   title: string;
   description?: string;
   status: string;
   priority: TaskPriority;
-  dueDate: NullTime;
+  dueDate: string | null;
 }
 
 export interface TaskResponseDTO {
@@ -26,8 +24,8 @@ export interface TaskResponseDTO {
   assignedTo?: ProjectMemberResponseDTO;
   title: string;
   taskNumber: string;
-  description: NullString;
+  description: string;
   status: string;
   priority: TaskPriority;
-  dueDate: NullTime;
+  dueDate: string;
 }

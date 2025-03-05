@@ -21,7 +21,6 @@ const NameBubble: React.FC<NameBubbleProps> = ({
   const [isHovered, setIsHovered] = useState(false);
   const [internalIsSelected, setInternalIsSelected] = useState(false);
 
-  // Use the external prop if provided, otherwise use internal state
   const isSelected =
     externalIsSelected !== undefined ? externalIsSelected : internalIsSelected;
 
@@ -46,12 +45,10 @@ const NameBubble: React.FC<NameBubbleProps> = ({
       return;
     }
 
-    // Toggle internal state if no external control
     if (externalIsSelected === undefined) {
       setInternalIsSelected(!internalIsSelected);
     }
 
-    // Call the onClick handler if provided
     if (onClick) {
       onClick();
     }
@@ -60,7 +57,6 @@ const NameBubble: React.FC<NameBubbleProps> = ({
   return (
     <div
       className="relative flex flex-col items-center"
-      style={{ zIndex: isHovered || isSelected ? zIndex + 1 : zIndex }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleClick}
@@ -78,6 +74,7 @@ const NameBubble: React.FC<NameBubbleProps> = ({
       <AnimatePresence>
         {isHovered && (
           <motion.div
+            style={{ zIndex: 9999 }}
             className={cn(
               "absolute text-xs top-12 bg-gray-700 text-white px-2 py-1 rounded whitespace-nowrap",
               !isFilter && "-top-6"

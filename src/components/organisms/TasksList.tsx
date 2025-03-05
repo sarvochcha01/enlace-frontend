@@ -1,9 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import ButtonWithIcon from "../atoms/ButtonWithIcon";
 import { Plus } from "lucide-react";
-import { useParams } from "react-router-dom";
-import CreateTaskModal from "../modals/CreateTaskModal";
-import { AnimatePresence } from "framer-motion";
 import { useTaskModal } from "../../hooks/useTaskModal";
 
 interface TasksListProps {
@@ -13,13 +10,11 @@ interface TasksListProps {
 }
 
 const TasksList: React.FC<TasksListProps> = ({ title, children }) => {
-  const { projectId } = useParams<{ projectId: string }>();
-
   const { openTaskModal } = useTaskModal();
 
   return (
     <div className="flex flex-col shrink-0 w-64  relative border-2 border-gray-200 rounded-lg">
-      <div className="bg-primary text-white p-3 font-medium sticky top-0 w-full   rounded-t-lg border-gray-200 flex justify-between items-center">
+      <div className="bg-primary text-white p-3 font-medium sticky top-0 w-full  z-50 rounded-t-lg border-gray-200 flex justify-between items-center">
         <span className=" font-semibold">{title}</span>
         <span className="bg-gray-100 text-gray-600 text-xs font-medium px-2 py-1 rounded-full">
           {children && React.Children.count(children) > 0

@@ -53,7 +53,12 @@ const TaskHeadingCard: React.FC<TaskHeadingCardProps> = ({
           <span>{dueDate}</span>
         </div>
         {assignee && (
-          <NameBubble name={assignee} isSelected={false} zIndex={0} />
+          <NameBubble
+            isFilter={false}
+            name={assignee}
+            isSelected={false}
+            zIndex={1}
+          />
         )}
       </div>
     </button>

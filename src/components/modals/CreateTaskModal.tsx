@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useToast } from "../../hooks/useToast";
 import { motion } from "framer-motion";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { CreateTaskDTO } from "../../models/task";
+import { TaskDTO } from "../../models/task";
 import InputField from "../atoms/InputField";
 import TextAreaField from "../atoms/TextAreaField";
 import { useTaskModal } from "../../hooks/useTaskModal";
@@ -11,7 +11,6 @@ import { useProject } from "../../hooks/useProject";
 import ButtonWithIcon from "../atoms/ButtonWithIcon";
 import { Check, X } from "lucide-react";
 import { TaskService } from "../../services/TaskService";
-import { div } from "motion/react-client";
 
 interface CreateTaskModalProps {
   closeModal: () => void;
@@ -24,18 +23,17 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ closeModal }) => {
 
   const [isCreatingTask, setIsCreatingTask] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [originalData, setOriginalData] = useState<CreateTaskDTO | null>(null);
+  const [originalData, setOriginalData] = useState<TaskDTO | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
 
   const {
     register,
     handleSubmit,
-    control,
     setValue,
     formState: { errors },
     reset,
     watch,
-  } = useForm<CreateTaskDTO>({
+  } = useForm<TaskDTO>({
     mode: "onChange",
   });
 
@@ -43,13 +41,21 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ closeModal }) => {
 
   useEffect(() => {
     if (originalData && modalMode === "display") {
+      const normalizeData = (data: TaskDTO) => ({
+        ...data,
+        assignedTo: data.assignedTo || "", // Ensure consistent default
+        dueDate: data.dueDate ? data.dueDate.split("T")[0] : "", // Normalize date format
+      });
+
       const isChanged =
-        JSON.stringify(originalData) !== JSON.stringify(formValues);
+        JSON.stringify(normalizeData(originalData)) !==
+        JSON.stringify(normalizeData(formValues));
+
       setHasChanges(isChanged);
     }
   }, [formValues, originalData, modalMode]);
 
-  const handleTaskSubmit: SubmitHandler<CreateTaskDTO> = async (data) => {
+  const handleTaskSubmit: SubmitHandler<TaskDTO> = async (data) => {
     setIsCreatingTask(true);
     try {
       if (modalMode === "add") {
@@ -83,11 +89,11 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ closeModal }) => {
       const task = await TaskService.getTask(taskId!, project!.id);
 
       // Create a consistent object structure for comparison
-      const taskData: CreateTaskDTO = {
+      const taskData: TaskDTO = {
         title: task.title,
-        description: task.description.String,
+        description: task.description,
         assignedTo: task.assignedTo?.id || "",
-        dueDate: task.dueDate.Valid ? task.dueDate : { Time: "", Valid: false },
+        dueDate: task.dueDate,
         priority: task.priority,
         status: task.status,
       };
@@ -96,7 +102,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ closeModal }) => {
       setValue("title", taskData.title);
       setValue("description", taskData.description);
       setValue("assignedTo", taskData.assignedTo);
-      setValue("dueDate", taskData.dueDate);
+      setValue("dueDate", taskData.dueDate?.split("T")[0] ?? "");
       setValue("priority", taskData.priority);
       setValue("status", taskData.status);
 
@@ -119,7 +125,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ closeModal }) => {
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center"
+      className="fixed inset-0 z-[100] flex items-center justify-center"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -195,7 +201,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ closeModal }) => {
                   id="dueDate"
                   type="date"
                   error={errors.dueDate?.message}
-                  control={control}
+                  register={register}
                   flexDir="row"
                 />
 

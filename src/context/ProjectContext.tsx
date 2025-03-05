@@ -1,9 +1,9 @@
 import React, { createContext, useEffect, useState } from "react";
 import { ProjectResponseDTO } from "../models/project";
-import { TaskResponseDTO } from "../models/task";
 
 export interface ProjectContextType {
   project: ProjectResponseDTO | null;
+  projectId: string;
   setProject: (project: ProjectResponseDTO | null) => void;
 }
 
@@ -17,9 +17,16 @@ export const ProjectProvider = ({
   children: React.ReactNode;
 }) => {
   const [project, setProject] = useState<ProjectResponseDTO | null>(null);
+  const [projectId, setProjectId] = useState<string>("");
+
+  useEffect(() => {
+    if (project) {
+      setProjectId(project.id);
+    }
+  }, [project]);
 
   return (
-    <ProjectContext.Provider value={{ project, setProject }}>
+    <ProjectContext.Provider value={{ project, projectId, setProject }}>
       {children}
     </ProjectContext.Provider>
   );

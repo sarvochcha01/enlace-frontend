@@ -1,12 +1,11 @@
 import axios from "axios";
-import { CreateTaskDTO, TaskResponseDTO } from "../models/task";
+import { TaskDTO, TaskResponseDTO } from "../models/task";
 import { baseUrl } from "../utils/utils";
 import { getIdToken } from "../singletons/Auth";
-import { NullTime } from "../models/NullTime";
 
 export class TaskService {
   static createTask = async (
-    task: CreateTaskDTO,
+    task: TaskDTO,
     projectId: string
   ): Promise<void> => {
     const token = await getIdToken();
@@ -15,9 +14,10 @@ export class TaskService {
       throw new Error("No authentication token available. Please log in.");
     }
 
-    const requestBody = {
+    const requestBody: TaskDTO = {
       ...task,
-      assignedTo: task.assignedTo ? task.assignedTo : null,
+      assignedTo: task.assignedTo !== "" ? task.assignedTo : null,
+      dueDate: task.dueDate !== "" ? `${task.dueDate}T00:00:00Z` : null,
     };
 
     console.log("Creating task:", requestBody);
@@ -56,7 +56,7 @@ export class TaskService {
 
   static updateTask = async (
     taskId: string,
-    task: CreateTaskDTO,
+    task: TaskDTO,
     projectId: string
   ): Promise<void> => {
     const token = await getIdToken();
@@ -65,9 +65,10 @@ export class TaskService {
       throw new Error("No authentication token available. Please log in.");
     }
 
-    const requestBody = {
+    const requestBody: TaskDTO = {
       ...task,
-      assignedTo: task.assignedTo ? task.assignedTo : null,
+      assignedTo: task.assignedTo !== "" ? task.assignedTo : null,
+      dueDate: task.dueDate !== "" ? `${task.dueDate}T00:00:00Z` : null,
     };
 
     console.log("Updating task:", requestBody);

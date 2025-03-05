@@ -71,9 +71,7 @@ const ProjectDetails = () => {
 
       const searchMatch =
         task.title.toLowerCase().includes(filters.search.toLowerCase()) ||
-        task.description.String.toLowerCase().includes(
-          filters.search.toLowerCase()
-        );
+        task.description?.toLowerCase().includes(filters.search.toLowerCase());
 
       const assignedToMatch =
         task.assignedTo?.id === filters.assignedTo || filters.assignedTo === "";
@@ -170,9 +168,7 @@ const ProjectDetails = () => {
                   title={task.title}
                   priority={task.priority}
                   dueDate={
-                    task.dueDate.Valid
-                      ? formatDate(task.dueDate.Time!)
-                      : "No due date"
+                    task.dueDate ? formatDate(task.dueDate) : "No due date"
                   }
                   assignee={task.assignedTo?.name}
                 />
@@ -189,9 +185,7 @@ const ProjectDetails = () => {
                   title={task.title}
                   priority={task.priority}
                   dueDate={
-                    task.dueDate.Valid
-                      ? formatDate(task.dueDate.Time!)
-                      : "No due date"
+                    task.dueDate ? formatDate(task.dueDate) : "No due date"
                   }
                   assignee={task.assignedTo?.name}
                 />
@@ -208,9 +202,7 @@ const ProjectDetails = () => {
                   title={task.title}
                   priority={task.priority}
                   dueDate={
-                    task.dueDate.Valid
-                      ? formatDate(task.dueDate.Time!)
-                      : "No due date"
+                    task.dueDate ? formatDate(task.dueDate) : "No due date"
                   }
                   assignee={task.assignedTo?.name}
                 />
@@ -220,7 +212,14 @@ const ProjectDetails = () => {
       </div>
 
       <AnimatePresence>
-        {isTaskModalOpen && <CreateTaskModal closeModal={closeTaskModal} />}
+        {isTaskModalOpen && (
+          <CreateTaskModal
+            closeModal={() => {
+              closeTaskModal();
+              fetchProjectDetails();
+            }}
+          />
+        )}
       </AnimatePresence>
     </div>
   );
