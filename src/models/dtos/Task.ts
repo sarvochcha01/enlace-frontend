@@ -23,7 +23,7 @@ export interface TaskResponseDTO {
   updatedBy: ProjectMemberResponseDTO;
   assignedTo?: ProjectMemberResponseDTO;
   title: string;
-  taskNumber: string;
+  taskNumber: number;
   description: string;
   status: string;
   priority: TaskPriority;

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { TaskDTO, TaskResponseDTO } from "../models/task";
+import { TaskDTO, TaskResponseDTO } from "../models/dtos/Task";
 import { baseUrl } from "../utils/utils";
 import { getIdToken } from "../singletons/Auth";
 

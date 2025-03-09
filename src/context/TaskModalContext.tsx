@@ -1,5 +1,4 @@
 import React, { createContext, useState } from "react";
-import { TaskService } from "../services/TaskService";
 
 export type TaskModalMode = "add" | "display";
 

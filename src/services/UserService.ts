@@ -1,6 +1,7 @@
 import axios from "axios";
 import { User } from "firebase/auth";
 import { baseUrl, LogType } from "../utils/utils";
+import { getIdToken } from "../singletons/Auth";
 
 export class UserService {
   static async CreateUser(user: User) {
@@ -28,4 +29,18 @@ export class UserService {
       return;
     }
   }
+
+  static GetUser = async () => {
+    const token = await getIdToken();
+
+    if (!token) {
+      throw new Error("No authentication token available. Please log in.");
+    }
+
+    const res = await axios.get(`${baseUrl}/users`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    return res.data;
+  };
 }

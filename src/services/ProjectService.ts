@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CreateProjectDTO, ProjectResponseDTO } from "../models/project";
+import { CreateProjectDTO, ProjectResponseDTO } from "../models/dtos/project";
 
 import { baseUrl } from "../utils/utils";
 

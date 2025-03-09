@@ -23,6 +23,7 @@ import ProjectDetails from "./components/pages/project/ProjectDetails.tsx";
 import { TaskModalProvider } from "./context/TaskModalContext.tsx";
 import { ProjectProvider } from "./context/ProjectContext.tsx";
 import { ProjectMemberProvider } from "./context/ProjectMemberContext.tsx";
+import { UserProvider } from "./context/UserContext.tsx";
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const { user, loading } = useAuth();
@@ -73,9 +74,11 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <AuthProvider>
       <ToastProvider>
-        <ProjectProvider>
-          <RouterProvider router={router} />
-        </ProjectProvider>
+        <UserProvider>
+          <ProjectProvider>
+            <RouterProvider router={router} />
+          </ProjectProvider>
+        </UserProvider>
       </ToastProvider>
     </AuthProvider>
   </StrictMode>

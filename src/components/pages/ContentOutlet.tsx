@@ -4,12 +4,18 @@ import SideNav from "../organisms/navigation/SideNav";
 import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 
+import { UserService } from "../../services/UserService";
+import { useUser } from "../../hooks/useUser";
+
 const loader = async () => {
   return null;
 };
 
 const ContentOutlet = () => {
   const [isSideNavPanelOpen, setIsSideNavPanelOpen] = useState(false);
+  const [isDBUserLoading, setIsDBUserLoading] = useState(true);
+
+  const { setDBUser } = useUser();
 
   const toggleSideNavPanel = () => {
     setIsSideNavPanelOpen((prev) => {
@@ -24,6 +30,22 @@ const ContentOutlet = () => {
     );
     setIsSideNavPanelOpen(isSideNavPanelOpen);
   }, []);
+
+  const fetchDBUser = async () => {
+    const userData = await UserService.GetUser();
+    console.log(userData);
+    setDBUser(userData);
+    setIsDBUserLoading(false);
+    return userData;
+  };
+
+  useEffect(() => {
+    fetchDBUser();
+  }, []);
+
+  if (isDBUserLoading) {
+    return <div>Loading DB User...</div>;
+  }
 
   return (
     <div className="w-screen h-screen flex flex-col">

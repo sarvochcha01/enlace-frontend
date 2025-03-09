@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
-import { ProjectResponseDTO } from "../models/project";
+import { ProjectResponseDTO } from "../models/dtos/project";
 
 export interface ProjectContextType {
   project: ProjectResponseDTO | null;

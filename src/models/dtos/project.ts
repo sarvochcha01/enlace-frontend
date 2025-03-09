@@ -1,6 +1,6 @@
 import { ProjectMemberResponseDTO } from "./projectMember";
-import { TaskResponseDTO } from "./task";
-import { User } from "./user";
+import { TaskResponseDTO } from "./Task";
+import { User } from "./User";
 
 export interface ProjectResponseDTO {
   id: string;

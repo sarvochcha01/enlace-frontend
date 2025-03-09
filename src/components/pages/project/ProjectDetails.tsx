@@ -14,11 +14,10 @@ import { useTaskModal } from "../../../hooks/useTaskModal";
 import TaskModal from "../../modals/TaskModal";
 import { AnimatePresence } from "framer-motion";
 import { useProject } from "../../../hooks/useProject";
-import { TaskResponseDTO } from "../../../models/task";
+import { TaskResponseDTO } from "../../../models/dtos/Task";
 import { ProjectFilters } from "../../../models/ProjectFilters";
-import { useAuth } from "../../../hooks/auth/useAuth";
 import { useProjectMember } from "../../../hooks/useProjectMember";
-import { ProjectMemberService } from "../../../services/ProjectMemberService";
+import { useUser } from "../../../hooks/useUser";
 
 const ProjectDetails = () => {
   const { projectId } = useParams<{ projectId: string }>();
@@ -34,10 +33,11 @@ const ProjectDetails = () => {
     null
   );
 
-  const { setProjectMemberId } = useProjectMember();
+  const { setProjectMember, setProjectMembers } = useProjectMember();
   const { project, setProject } = useProject();
   const { showToast } = useToast();
   const { isTaskModalOpen, openTaskModal, closeTaskModal } = useTaskModal();
+  const { dbUser } = useUser();
 
   const navigate = useNavigate();
 
@@ -53,11 +53,18 @@ const ProjectDetails = () => {
     setIsLoading(true);
     try {
       const projectRes = await ProjectService.getProject(projectId);
-      const projectMemberRes = await ProjectMemberService.getProjectMember(
-        projectId
-      );
+      // const projectMemberRes = await ProjectMemberService.getProjectMember(
+      //   projectId
+      // );
 
-      setProjectMemberId(projectMemberRes.id);
+      console.log(projectRes);
+
+      setProjectMembers(projectRes.projectMembers || []);
+      setProjectMember(
+        projectRes.projectMembers.find(
+          (member) => member.userId === dbUser?.id
+        ) || null
+      );
       setProject(projectRes);
     } catch (error) {
       showToast("Error fetching project details", { type: "error" });

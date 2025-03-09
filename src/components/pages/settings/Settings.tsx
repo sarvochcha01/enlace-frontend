@@ -1,8 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../hooks/auth/useAuth";
+import { useUser } from "../../../hooks/useUser";
 
 const Settings = () => {
   const { user, logout } = useAuth();
+  const { dbUser } = useUser();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -18,7 +20,7 @@ const Settings = () => {
     <div className="flex flex-col">
       {user && (
         <div>
-          {user.displayName} {user.email}
+          {dbUser?.name} : {user.email}
         </div>
       )}
       <button onClick={handleLogout}>Signout</button>

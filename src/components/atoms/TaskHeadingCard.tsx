@@ -1,6 +1,6 @@
 import { Clock } from "lucide-react";
 import { useTaskModal } from "../../hooks/useTaskModal";
-import { TaskPriority } from "../../models/task";
+import { TaskPriority } from "../../models/dtos/Task";
 import NameBubble from "./NameBubble";
 import { getInitials } from "../../utils/utils";
 

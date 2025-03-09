@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ProjectService } from "../../../services/ProjectService";
-import { ProjectResponseDTO } from "../../../models/project";
+import { ProjectResponseDTO } from "../../../models/dtos/project";
 import ButtonWithIcon from "../../atoms/ButtonWithIcon";
 import { Check, Plus } from "lucide-react";
 import { AnimatePresence } from "framer-motion";

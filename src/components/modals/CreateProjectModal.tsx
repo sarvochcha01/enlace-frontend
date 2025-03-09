@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import InputField from "../atoms/InputField";
 import ButtonWithIcon from "../atoms/ButtonWithIcon";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { CreateProjectDTO } from "../../models/project";
+import { CreateProjectDTO } from "../../models/dtos/project";
 import { ProjectService } from "../../services/ProjectService";
 import { useToast } from "../../hooks/useToast";
 
