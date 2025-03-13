@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CommentDTO } from "../models/dtos/comment";
+import { CommentDTO } from "../models/dtos/Comment";
 import { baseUrl } from "../utils/utils";
 import { getIdToken } from "../singletons/Auth";
 

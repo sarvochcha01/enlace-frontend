@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../hooks/auth/useAuth";
 import { UserService } from "../../../services/UserService";
-import { getAdditionalUserInfo } from "firebase/auth";
+import { getAdditionalUserInfo, onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../../firebaseConfig";
 
 const Signup = () => {
   const [isSigningUp, setIsSigningUp] = useState(false);
@@ -15,6 +16,16 @@ const Signup = () => {
   const navigate = useNavigate();
 
   const { loginWithGoogle } = useAuth();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, () => {
+      navigate("/");
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   const handleGoogleLogin = async () => {
     try {
@@ -49,8 +60,6 @@ const Signup = () => {
         <div className="flex flex-col gap-2 mt-6">
           <input
             type="text"
-            name=""
-            id=""
             className="border border-black w-64 h-8 px-2"
             placeholder="Enter your name"
             value={name}
@@ -58,8 +67,6 @@ const Signup = () => {
           />
           <input
             type="email"
-            name=""
-            id=""
             className="border border-black w-64 h-8 px-2"
             placeholder="Enter your email"
             value={email}
@@ -67,8 +74,6 @@ const Signup = () => {
           />
           <input
             type="password"
-            name=""
-            id=""
             className="border border-black w-64 h-8 px-2"
             placeholder="Enter your password"
             value={password}

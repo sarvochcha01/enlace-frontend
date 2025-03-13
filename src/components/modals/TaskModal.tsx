@@ -3,18 +3,17 @@ import { useToast } from "../../hooks/useToast";
 import { motion } from "framer-motion";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { TaskDTO, TaskResponseDTO } from "../../models/dtos/Task";
-import InputField from "../atoms/InputField";
+import FormInputField from "../atoms/FormInputField";
 import TextAreaField from "../atoms/TextAreaField";
 import { useTaskModal } from "../../hooks/useTaskModal";
-import Dropdown from "../atoms/Dropdown";
+import FormDropdown from "../atoms/FormDropdown";
 import { useProject } from "../../hooks/useProject";
 import ButtonWithIcon from "../atoms/ButtonWithIcon";
 import { Check, X } from "lucide-react";
 import { TaskService } from "../../services/TaskService";
-import { useProjectMember } from "../../hooks/useProjectMember";
 import { formatDateAndTime } from "../../utils/utils";
 import { CommentService } from "../../services/CommentService";
-import { CommentResponseDTO } from "../../models/dtos/comment";
+import { CommentResponseDTO } from "../../models/dtos/Comment";
 import CommentsSection from "../organisms/CommentSection";
 
 interface TaskModalProps {
@@ -23,9 +22,8 @@ interface TaskModalProps {
 
 const TaskModal: React.FC<TaskModalProps> = ({ closeModal }) => {
   const { showToast } = useToast();
-  const { project } = useProject();
+  const { project, projectMember } = useProject();
   const { modalMode, taskId } = useTaskModal();
-  const { projectMember } = useProjectMember();
 
   const [isCreatingTask, setIsCreatingTask] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -197,7 +195,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ closeModal }) => {
                 </div>
                 <div className="flex gap-2">
                   <div className="w-2/3 flex flex-col gap-4 ">
-                    <InputField
+                    <FormInputField
                       label="Task Title"
                       id="title"
                       placeholder="Enter task title"
@@ -219,7 +217,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ closeModal }) => {
                   </div>
                   <div className="flex flex-col gap-4 w-1/3">
                     <div className=" flex flex-col gap-4 border border-gray-400 p-2 rounded">
-                      <Dropdown
+                      <FormDropdown
                         label="Assigned To"
                         options={{
                           "": "Unassigned",
@@ -235,7 +233,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ closeModal }) => {
                         register={register}
                         flexDir="row"
                       />
-                      <InputField
+                      <FormInputField
                         label="Due Date"
                         id="dueDate"
                         type="date"
@@ -244,7 +242,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ closeModal }) => {
                         flexDir="row"
                       />
 
-                      <Dropdown
+                      <FormDropdown
                         label="Priority"
                         options={{
                           low: "Low",
@@ -261,7 +259,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ closeModal }) => {
                         flexDir="row"
                       />
 
-                      <Dropdown
+                      <FormDropdown
                         label="Status"
                         options={{
                           todo: "To Do",

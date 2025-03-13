@@ -1,4 +1,4 @@
-import { ProjectMemberResponseDTO } from "./projectMember";
+import { ProjectMemberResponseDTO } from "./ProjectMember";
 import { TaskResponseDTO } from "./Task";
 import { User } from "./User";
 
@@ -18,4 +18,9 @@ export interface CreateProjectDTO {
   name: string;
   description: string;
   key: string;
+}
+
+export interface UpdateProjectDTO {
+  name: string;
+  description: string;
 }

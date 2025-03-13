@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../hooks/auth/useAuth";
-import { getAdditionalUserInfo } from "firebase/auth";
+import { getAdditionalUserInfo, onAuthStateChanged } from "firebase/auth";
 import { UserService } from "../../../services/UserService";
+import { auth } from "../../../firebaseConfig";
 
 const Login = () => {
   const [email, setEmail] = useState<string>("");
@@ -12,8 +13,15 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  // const { handleEmailLogin } = useEmailLogin(email, password, setIsLoggingIn);
-  // const { handleGoogleLogin } = useGoogleLogin(setIsLoggingIn);
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, () => {
+      navigate("/");
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   const { loginWithGoogle } = useAuth();
 

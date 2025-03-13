@@ -1,47 +1,32 @@
 import React from "react";
-import {
-  Path,
-  UseFormRegister,
-  FieldValues,
-  RegisterOptions,
-} from "react-hook-form";
 import { cn } from "../../utils/tailwindMerge";
 
-type InputFieldProps<T extends FieldValues> = {
+type InputFieldProps = {
   label: string;
-  id: Path<T>;
   type?: string;
-  error?: string;
-  register: UseFormRegister<T>;
-  validation?: RegisterOptions<T, Path<T>>;
+  error?: boolean | string;
   helperText?: string;
   flexDir?: "row" | "col";
-  isEditing?: boolean;
+  value?: string;
   className?: string;
-} & React.InputHTMLAttributes<HTMLInputElement>;
+  onChange?: (value: string) => void;
+} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">;
 
-const InputField = <T extends FieldValues>({
+const InputField: React.FC<InputFieldProps> = ({
   label,
-  id,
   type = "text",
-  error,
-  register,
-  validation,
-  helperText,
   flexDir = "col",
+  helperText,
+  error = false,
+  value,
+  onChange,
   className,
-  ...rest
-}: InputFieldProps<T>) => {
-  const handleDateFormat = (value: unknown) => {
-    if (type === "date") {
-      if (typeof value === "string" && value.includes("T")) {
-        return value.split("T")[0]; // Strips time portion if present
-      }
-      if (value instanceof Date) {
-        return value.toISOString().split("T")[0]; // Convert Date object to YYYY-MM-DD
-      }
+  ...restProps
+}) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (onChange) {
+      onChange(e.target.value);
     }
-    return value ?? ""; // Ensure we never return undefined
   };
 
   return (
@@ -54,27 +39,23 @@ const InputField = <T extends FieldValues>({
             : "flex-row items-center justify-between"
         )}
       >
-        <label htmlFor={id} className="text-sm">
-          {label}
-        </label>
+        <label className="text-sm">{label}</label>
         <input
-          id={id}
           type={type}
-          {...(register &&
-            register(id, {
-              ...validation,
-              setValueAs: (value) => handleDateFormat(value),
-            }))}
+          value={value}
+          onChange={handleChange}
           className={cn(
             "border rounded-lg p-2 mt-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary w-48",
             error ? "border-red-500 " : "border-gray-400 ",
             className
           )}
-          {...rest}
+          {...restProps}
         />
       </div>
       <div className="flex flex-col w-full ">
-        {error && <p className="text-red-500 text-sm ">{error}</p>}
+        {error && typeof error === "string" && (
+          <p className="text-red-500 text-sm ">{error}</p>
+        )}
         {helperText && (
           <p className="text-gray-500 text-xs mt-1 ">{helperText}</p>
         )}

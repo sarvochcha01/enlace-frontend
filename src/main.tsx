@@ -6,12 +6,12 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
   Navigate,
+  Outlet,
   Route,
   RouterProvider,
 } from "react-router-dom";
 import ContentOutlet from "./components/pages/ContentOutlet.tsx";
 import Login from "./components/pages/auth/Login.tsx";
-import AuthLoader from "./components/pages/auth/AuthLoader.ts";
 import Signup from "./components/pages/auth/Signup.tsx";
 import Settings from "./components/pages/settings/Settings.tsx";
 import Dashboard from "./components/pages/dashboard/Dashboard.tsx";
@@ -22,8 +22,12 @@ import { ToastProvider } from "./context/ToastContext.tsx";
 import ProjectDetails from "./components/pages/project/ProjectDetails.tsx";
 import { TaskModalProvider } from "./context/TaskModalContext.tsx";
 import { ProjectProvider } from "./context/ProjectContext.tsx";
-import { ProjectMemberProvider } from "./context/ProjectMemberContext.tsx";
 import { UserProvider } from "./context/UserContext.tsx";
+import JoinProject from "./components/pages/project/JoinProject.tsx";
+import ProjectSettings from "./components/pages/project/ProjectSettings.tsx";
+import Project from "./components/pages/project/Project.tsx";
+import NotFound404 from "./components/pages/error/NotFound404.tsx";
+import ServerError from "./components/pages/error/ServerError.tsx";
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const { user, loading } = useAuth();
@@ -41,9 +45,9 @@ const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<App />} errorElement={<div>Not Found</div>}>
-      <Route path="login" element={<Login />} loader={AuthLoader} />
-      <Route path="signup" element={<Signup />} loader={AuthLoader} />
+    <Route path="/" element={<App />} errorElement={<NotFound404 />}>
+      <Route path="login" element={<Login />} />
+      <Route path="signup" element={<Signup />} />
 
       <Route
         element={
@@ -53,19 +57,27 @@ const router = createBrowserRouter(
         }
       >
         <Route index element={<Dashboard />} />
-        <Route path="projects" element={<ProjectList />} />
-        <Route
-          path="projects/:projectId"
-          element={
-            <ProjectMemberProvider>
-              <TaskModalProvider>
-                <ProjectDetails />
-              </TaskModalProvider>
-            </ProjectMemberProvider>
-          }
-        />
+        <Route path="projects" element={<Outlet />}>
+          <Route index element={<ProjectList />} />
+          <Route
+            path=":projectId"
+            element={
+              <ProjectProvider>
+                <TaskModalProvider>
+                  <Project />
+                </TaskModalProvider>
+              </ProjectProvider>
+            }
+          >
+            <Route index element={<ProjectDetails />} />
+            <Route path="settings" element={<ProjectSettings />} />
+          </Route>
+          <Route path=":projectId/join" element={<JoinProject />} />
+        </Route>
         <Route path="settings" element={<Settings />} />
       </Route>
+
+      <Route path="health" element={<ServerError />} />
     </Route>
   )
 );
@@ -75,9 +87,7 @@ createRoot(document.getElementById("root")!).render(
     <AuthProvider>
       <ToastProvider>
         <UserProvider>
-          <ProjectProvider>
-            <RouterProvider router={router} />
-          </ProjectProvider>
+          <RouterProvider router={router} />
         </UserProvider>
       </ToastProvider>
     </AuthProvider>

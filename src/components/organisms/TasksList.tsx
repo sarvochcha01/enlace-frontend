@@ -16,7 +16,7 @@ const TasksList: React.FC<TasksListProps> = ({ title, children }) => {
     <div className="flex w-64 shrink-0 flex-col relative">
       <div className="bg-primary text-white h-10 rounded-t-xl flex justify-between px-2 items-center sticky  top-0 w-full ">
         <span className=" font-semibold">{title}</span>
-        <span className="bg-gray-100 text-gray-600 text-xs font-medium px-2 py-1 rounded-full">
+        <span className="bg-gray-100 text-gray-600 text-sm font-medium w-6 h-6 flex justify-center items-center rounded-full">
           {children && React.Children.count(children) > 0
             ? React.Children.count(children)
             : 0}

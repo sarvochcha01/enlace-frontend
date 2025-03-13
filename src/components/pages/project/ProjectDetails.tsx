@@ -1,28 +1,21 @@
 import { useEffect, useState } from "react";
-import { NavLink, useNavigate, useParams } from "react-router-dom";
-import { ProjectService } from "../../../services/ProjectService";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useToast } from "../../../hooks/useToast";
-import { validate } from "uuid";
 import SearchBar from "../../atoms/SearchBar";
 import NameBubble from "../../atoms/NameBubble";
 import TasksList from "../../organisms/TasksList";
 import TaskHeadingCard from "../../atoms/TaskHeadingCard";
 import { formatDate } from "../../../utils/utils";
 import ButtonWithIcon from "../../atoms/ButtonWithIcon";
-import { Plus } from "lucide-react";
+import { Plus, Settings } from "lucide-react";
 import { useTaskModal } from "../../../hooks/useTaskModal";
 import TaskModal from "../../modals/TaskModal";
 import { AnimatePresence } from "framer-motion";
 import { useProject } from "../../../hooks/useProject";
 import { TaskResponseDTO } from "../../../models/dtos/Task";
 import { ProjectFilters } from "../../../models/ProjectFilters";
-import { useProjectMember } from "../../../hooks/useProjectMember";
-import { useUser } from "../../../hooks/useUser";
 
 const ProjectDetails = () => {
-  const { projectId } = useParams<{ projectId: string }>();
-
-  const [isLoading, setIsLoading] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -33,50 +26,17 @@ const ProjectDetails = () => {
     null
   );
 
-  const { setProjectMember, setProjectMembers } = useProjectMember();
-  const { project, setProject } = useProject();
   const { showToast } = useToast();
   const { isTaskModalOpen, openTaskModal, closeTaskModal } = useTaskModal();
-  const { dbUser } = useUser();
+  const {
+    project,
+    setProject,
+    setProjectMembers,
+    setProjectMember,
+    isLoading,
+  } = useProject();
 
   const navigate = useNavigate();
-
-  const fetchProjectDetails = async () => {
-    if (!projectId) return;
-
-    if (!validate(projectId)) {
-      showToast("Invalid project ID", { type: "error" });
-      navigate("/projects");
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const projectRes = await ProjectService.getProject(projectId);
-      // const projectMemberRes = await ProjectMemberService.getProjectMember(
-      //   projectId
-      // );
-
-      console.log(projectRes);
-
-      setProjectMembers(projectRes.projectMembers || []);
-      setProjectMember(
-        projectRes.projectMembers.find(
-          (member) => member.userId === dbUser?.id
-        ) || null
-      );
-      setProject(projectRes);
-    } catch (error) {
-      showToast("Error fetching project details", { type: "error" });
-      navigate("/projects");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchProjectDetails();
-  }, [projectId]);
 
   useEffect(() => {
     if (!project) return;
@@ -123,15 +83,31 @@ const ProjectDetails = () => {
 
   return (
     <div className="flex flex-col w-full h-full">
-      <div className="flex gap-2">
-        <NavLink
-          to="/projects"
-          className="hover:underline"
-          onClick={() => setProject(null)}
-        >
-          Projects
-        </NavLink>
-        /<div>{project?.name}</div>
+      <div className="w-full flex items-center justify-between">
+        <div className="flex gap-2">
+          <NavLink
+            to="/projects"
+            className="hover:underline"
+            onClick={() => {
+              setProject(null);
+              setProjectMembers(null);
+              setProjectMember(null);
+            }}
+          >
+            Projects
+          </NavLink>
+          /<div>{project?.name}</div>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <Settings
+            size={20}
+            className="cursor-pointer"
+            onClick={() => {
+              navigate(`settings`);
+            }}
+          />
+        </div>
       </div>
       <div className="text-2xl">{project?.name}</div>
 
@@ -230,7 +206,6 @@ const ProjectDetails = () => {
           <TaskModal
             closeModal={() => {
               closeTaskModal();
-              fetchProjectDetails();
             }}
           />
         )}

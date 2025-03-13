@@ -1,58 +1,72 @@
-import {
-  FieldValues,
-  Path,
-  RegisterOptions,
-  UseFormRegister,
-} from "react-hook-form";
+import React from "react";
+import { cn } from "../../utils/tailwindMerge";
 
-type DropdownProps<T extends FieldValues> = {
-  label: string;
+type DropdownProps = {
+  label?: string;
   options: Record<string, string>;
-  id: Path<T>;
-  error?: string;
-  register: UseFormRegister<T>;
-  validation?: RegisterOptions<T, Path<T>>;
+  value?: string;
+  error?: boolean | string;
   helperText?: string;
   flexDir?: "row" | "col";
   className?: string;
-};
+  onChange?: (value: string) => void;
+} & Omit<React.SelectHTMLAttributes<HTMLSelectElement>, "onChange">;
 
-const Dropdown = <T extends FieldValues>({
+const Dropdown: React.FC<DropdownProps> = ({
   label,
   options,
-  id,
-  error,
-  register,
-  validation,
+  value,
+  error = false,
   helperText,
   flexDir = "col",
   className,
-}: DropdownProps<T>) => {
+  onChange,
+  ...restProps
+}) => {
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (onChange) {
+      onChange(e.target.value);
+    }
+  };
+
   return (
-    <div
-      className={`flex ${
-        flexDir === "col" ? "flex-col" : "flex-row items-center justify-between"
-      }`}
-    >
-      <label htmlFor={id} className="text-sm">
-        {label}
-      </label>
-      <select
-        id={id}
-        {...register(id, validation)}
-        className={`border rounded-lg p-2 mt-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary w-48 ${
-          error ? "border-red-500" : "border-gray-400"
-        } ${className}`}
+    <div className="flex flex-col">
+      <div
+        className={cn(
+          "flex",
+          flexDir === "col"
+            ? "flex-col"
+            : "flex-row items-center justify-between"
+        )}
       >
-        {Object.entries(options).map(([key, value]) => (
-          <option key={key} value={key}>
-            {value}
-          </option>
-        ))}
-      </select>
-      {helperText && <p className="text-gray-500 text-xs mt-1">{helperText}</p>}
-      {error && <p className="text-red-500 text-sm">{error}</p>}
+        {label && <label className="text-sm">{label}</label>}
+        <select
+          value={value}
+          onChange={handleChange}
+          className={cn(
+            "border rounded-lg p-2 mt-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary w-48",
+            error ? "border-red-500" : "border-gray-400",
+            className
+          )}
+          {...restProps}
+        >
+          {Object.entries(options).map(([key, value]) => (
+            <option key={key} value={key}>
+              {value}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="flex flex-col w-full">
+        {error && typeof error === "string" && (
+          <p className="text-red-500 text-sm">{error}</p>
+        )}
+        {helperText && (
+          <p className="text-gray-500 text-xs mt-1">{helperText}</p>
+        )}
+      </div>
     </div>
   );
 };
+
 export default Dropdown;

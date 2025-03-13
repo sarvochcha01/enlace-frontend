@@ -1,10 +1,9 @@
 import { LoaderCircle, Send, Edit, Trash2, X } from "lucide-react";
-import { useProjectMember } from "../../hooks/useProjectMember";
 import ButtonWithIcon from "./ButtonWithIcon";
 import React, { useEffect, useRef, useState } from "react";
 import { cn } from "../../utils/tailwindMerge";
 import { CommentService } from "../../services/CommentService";
-import { CommentResponseDTO } from "../../models/dtos/comment";
+import { CommentResponseDTO } from "../../models/dtos/Comment";
 import { useProject } from "../../hooks/useProject";
 import { useTaskModal } from "../../hooks/useTaskModal";
 import { formatDateAndTime } from "../../utils/utils";
@@ -20,8 +19,7 @@ const CommentArea: React.FC<CommentAreaProps> = ({
   comment,
   fetchComments,
 }) => {
-  const { projectMember, getProjectMemberData } = useProjectMember();
-  const { projectId } = useProject();
+  const { project, projectMember, getProjectMemberData } = useProject();
   const { taskId } = useTaskModal();
 
   const isCommentEdited = comment?.updatedAt !== comment?.createdAt;
@@ -66,7 +64,7 @@ const CommentArea: React.FC<CommentAreaProps> = ({
     try {
       await CommentService.createComment({
         comment: commentText,
-        projectId,
+        projectId: project?.id!,
         taskId: taskId!,
       });
 
@@ -87,7 +85,7 @@ const CommentArea: React.FC<CommentAreaProps> = ({
     try {
       await CommentService.updateComment(comment.id, {
         comment: editText,
-        projectId,
+        projectId: project?.id!,
         taskId: taskId!,
       });
 
@@ -105,7 +103,7 @@ const CommentArea: React.FC<CommentAreaProps> = ({
 
     setIsDeleting(true);
     try {
-      await CommentService.deleteComment(projectId, taskId!, comment.id);
+      await CommentService.deleteComment(project?.id!, taskId!, comment.id);
     } catch (e) {
       console.error(e);
     } finally {

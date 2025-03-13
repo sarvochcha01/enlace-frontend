@@ -1,14 +1,23 @@
 import axios from "axios";
-import { CreateProjectDTO, ProjectResponseDTO } from "../models/dtos/project";
+import {
+  CreateProjectDTO,
+  ProjectResponseDTO,
+  UpdateProjectDTO,
+} from "../models/dtos/Project";
 
 import { baseUrl } from "../utils/utils";
 
 import { getIdToken } from "../singletons/Auth";
+import { validate } from "uuid";
 
 export class ProjectService {
   static getProject = async (
     projectID: string
   ): Promise<ProjectResponseDTO> => {
+    if (!validate(projectID)) {
+      throw new Error("Invalid project ID");
+    }
+
     const token = await getIdToken();
 
     if (!token) {
@@ -60,6 +69,90 @@ export class ProjectService {
         Authorization: `Bearer ${token}`,
       },
     });
+
+    console.log(res.data);
+    return res.data;
+  };
+
+  static getProjectName = async (projectId: string): Promise<any> => {
+    const token = await getIdToken();
+
+    if (!token) {
+      throw new Error("No authentication token available. Please log in.");
+    }
+
+    const res = await axios.get(`${baseUrl}/projects/${projectId}/join`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log(res.data);
+    return res.data;
+  };
+
+  static updateProject = async (
+    projectId: string,
+    project: UpdateProjectDTO
+  ): Promise<void> => {
+    const token = await getIdToken();
+
+    if (!token) {
+      throw new Error("No authentication token available. Please log in.");
+    }
+
+    const payload = {
+      name: project.name,
+      description: project.description,
+    };
+
+    const res = await axios.put(`${baseUrl}/projects/${projectId}`, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log(res.data);
+    return res.data;
+  };
+
+  static joinProject = async (projectId: string): Promise<any> => {
+    const token = await getIdToken();
+
+    if (!token) {
+      throw new Error("No authentication token available. Please log in.");
+    }
+
+    const res = await axios.post(
+      `${baseUrl}/projects/${projectId}/join`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log(res.data);
+    return res.data;
+  };
+
+  static leaveProject = async (projectId: string): Promise<any> => {
+    const token = await getIdToken();
+
+    if (!token) {
+      throw new Error("No authentication token available. Please log in.");
+    }
+
+    const res = await axios.post(
+      `${baseUrl}/projects/${projectId}/leave`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     console.log(res.data);
     return res.data;

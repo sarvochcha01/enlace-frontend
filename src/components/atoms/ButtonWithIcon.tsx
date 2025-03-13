@@ -28,7 +28,7 @@ const ButtonWithIcon: React.FC<ButtonWithIconProps> = ({
         bg == "no-bg"
           ? "hover:bg-gray-200 text-primary"
           : "bg-primary hover:bg-[#0055bb] text-white",
-        disabled && "opacity-50 cursor-not-allowed hover:bg-primary",
+        disabled && "opacity-50 cursor-not-allowed ",
         className
       )}
       onClick={onClick}

@@ -1,15 +1,4 @@
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebaseConfig";
-
 export const baseUrl = "http://localhost:3000/api/v1";
-
-export const checkIfLoggedIn = async () => {
-  return new Promise((resolve) => {
-    onAuthStateChanged(auth, (user) => {
-      resolve(user);
-    });
-  });
-};
 
 export const enum LogType {
   Log,

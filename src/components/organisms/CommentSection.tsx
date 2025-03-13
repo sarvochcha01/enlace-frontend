@@ -1,4 +1,4 @@
-import { CommentResponseDTO } from "../../models/dtos/comment";
+import { CommentResponseDTO } from "../../models/dtos/Comment";
 import CommentArea from "../atoms/CommentArea";
 
 interface CommentsSectionProps {

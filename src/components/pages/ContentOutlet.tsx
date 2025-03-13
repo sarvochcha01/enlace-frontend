@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import NavigationBar from "../organisms/navigation/NavigationBar";
 import SideNav from "../organisms/navigation/SideNav";
 import { useEffect, useState } from "react";
@@ -14,6 +14,8 @@ const loader = async () => {
 const ContentOutlet = () => {
   const [isSideNavPanelOpen, setIsSideNavPanelOpen] = useState(false);
   const [isDBUserLoading, setIsDBUserLoading] = useState(true);
+
+  const navigate = useNavigate();
 
   const { setDBUser } = useUser();
 
@@ -32,11 +34,16 @@ const ContentOutlet = () => {
   }, []);
 
   const fetchDBUser = async () => {
-    const userData = await UserService.GetUser();
-    console.log(userData);
-    setDBUser(userData);
-    setIsDBUserLoading(false);
-    return userData;
+    try {
+      const userData = await UserService.GetUser();
+      console.log(userData);
+      setDBUser(userData);
+      setIsDBUserLoading(false);
+      return userData;
+    } catch (error) {
+      console.error("Error fetching user data", error);
+      navigate("/down");
+    }
   };
 
   useEffect(() => {

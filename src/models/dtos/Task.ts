@@ -1,4 +1,4 @@
-import { ProjectMemberResponseDTO } from "./projectMember";
+import { ProjectMemberResponseDTO } from "./ProjectMember";
 
 export enum TaskPriority {
   low = "low",

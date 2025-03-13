@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
 import { Check, X } from "lucide-react";
 import React, { useState } from "react";
-import InputField from "../atoms/InputField";
+import FormInputField from "../atoms/FormInputField";
 import ButtonWithIcon from "../atoms/ButtonWithIcon";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { CreateProjectDTO } from "../../models/dtos/project";
+import { CreateProjectDTO } from "../../models/dtos/Project";
 import { ProjectService } from "../../services/ProjectService";
 import { useToast } from "../../hooks/useToast";
 
@@ -71,7 +71,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
         </div>
 
         <div className="flex flex-col gap-4">
-          <InputField
+          <FormInputField
             label="Project Name"
             id="name"
             register={register}
@@ -86,7 +86,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
             placeholder="My Awesome Project"
             className="w-full"
           />
-          <InputField
+          <FormInputField
             label="Project Key"
             id="key"
             register={register}
@@ -112,7 +112,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
             }
             className="w-full"
           />
-          <InputField
+          <FormInputField
             label="Description"
             id="description"
             register={register}
