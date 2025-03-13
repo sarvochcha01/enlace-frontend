@@ -22,4 +22,29 @@ export class ProjectMemberService {
 
     return res.data;
   };
+
+  static updateProjectMember = async (
+    projectID: string,
+    projectMemberID: string,
+    newRole: string
+  ) => {
+    const token = await getIdToken();
+    console.log(projectID, projectMemberID, newRole);
+
+    if (!token) {
+      throw new Error("No authentication token available. Please log in.");
+    }
+
+    const res = await axios.put(
+      `${baseUrl}/projects/${projectID}/project-members/${projectMemberID}`,
+      { role: newRole },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return res.data;
+  };
 }

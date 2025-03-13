@@ -79,7 +79,7 @@ const ProjectDetails = () => {
     }
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading || !project) return <div>Loading...</div>;
 
   return (
     <div className="flex flex-col w-full h-full">

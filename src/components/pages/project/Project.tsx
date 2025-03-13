@@ -13,8 +13,13 @@ const Project = () => {
 
   const navigate = useNavigate();
 
-  const { setProject, setProjectMember, setProjectMembers, setIsLoading } =
-    useProject();
+  const {
+    setProject,
+    setProjectMember,
+    setProjectMembers,
+    setIsLoading,
+    isLoading,
+  } = useProject();
 
   const fetchProjectDetails = async () => {
     if (!projectId) return;
@@ -52,6 +57,11 @@ const Project = () => {
   useEffect(() => {
     fetchProjectDetails();
   }, [projectId]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="w-full h-full">
       <Outlet />

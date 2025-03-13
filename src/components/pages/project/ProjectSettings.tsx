@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import ButtonWithIcon from "../../atoms/ButtonWithIcon";
-import { Check, ChevronLeft, LogOut } from "lucide-react";
+import { Check, ChevronLeft, LogOut, Trash } from "lucide-react";
 import { useProject } from "../../../hooks/useProject";
 import { ProjectService } from "../../../services/ProjectService";
 import { useToast } from "../../../hooks/useToast";
@@ -8,10 +8,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import InputField from "../../atoms/InputField";
 import { UpdateProjectDTO } from "../../../models/dtos/Project";
 import Dropdown from "../../atoms/Dropdown";
+import { ProjectMemberService } from "../../../services/ProjectMemberService";
+import { useUser } from "../../../hooks/useUser";
 
 const ProjectSettings = () => {
   const { showToast } = useToast();
   const { project, refetchProject, projectMembers } = useProject();
+  const { dbUser } = useUser();
   const navigate = useNavigate();
   const { projectId } = useParams();
 
@@ -23,6 +26,8 @@ const ProjectSettings = () => {
 
   const [isDataChanged, setIsDataChanged] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+
+  const [memberRoles, setMemberRoles] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (project) {
@@ -47,6 +52,17 @@ const ProjectSettings = () => {
         })
     );
   }, [project, projectData]);
+
+  useEffect(() => {
+    if (!projectMembers) return;
+
+    const roles: Record<string, string> = {};
+    projectMembers.forEach((member) => {
+      roles[member.id] = member.role;
+    });
+
+    setMemberRoles(roles);
+  }, [projectMembers]);
 
   const leaveProject = async () => {
     if (!project) return;
@@ -76,6 +92,32 @@ const ProjectSettings = () => {
       showToast("Error updating project", { type: "error" });
     } finally {
       setIsUpdating(false);
+    }
+  };
+
+  const handleRoleChange = async (memberId: string, role: string) => {
+    if (!project) return;
+
+    console.log(memberId, role);
+
+    ProjectMemberService.updateProjectMember(project.id, memberId, role)
+      .then(() => {
+        showToast("Role updated successfully", { type: "success" });
+      })
+      .catch(() => {
+        showToast("Error updating role", { type: "error" });
+      });
+  };
+
+  const handleDeleteProject = async () => {
+    if (!project) return;
+
+    try {
+      await ProjectService.deleteProject(project.id);
+      showToast("Project deleted successfully", { type: "success" });
+      navigate("/projects");
+    } catch (error) {
+      showToast("Error deleting project", { type: "error" });
     }
   };
 
@@ -136,16 +178,20 @@ const ProjectSettings = () => {
               <div key={member.id} className="flex items-center">
                 <div className="flex items-center gap-2">
                   <p>{member.name}</p>
+                  {member.userId === dbUser?.id && (
+                    <p className="text-xs text-gray-500">(YOU)</p>
+                  )}
                 </div>
                 <Dropdown
                   flexDir="row"
                   value={member.role}
                   options={{
-                    admin: "Admin",
-                    member: "Member",
+                    owner: "Owner",
+                    editor: "Editor",
+                    viewer: "Viewer",
                   }}
                   onChange={(value) => {
-                    console.log(value);
+                    handleRoleChange(member.id, value);
                   }}
                 />
               </div>
@@ -161,6 +207,15 @@ const ProjectSettings = () => {
           />
         </div>
       </div>
+
+      <ButtonWithIcon
+        icon={<Trash size={20} />}
+        text="Delete Project"
+        onClick={handleDeleteProject}
+        bg="no-bg"
+        className="text-red-500 mt-4"
+        disabled={isLeaving}
+      />
     </div>
   );
 };

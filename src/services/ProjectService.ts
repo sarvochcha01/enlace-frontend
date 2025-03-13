@@ -116,6 +116,23 @@ export class ProjectService {
     return res.data;
   };
 
+  static deleteProject = async (projectId: string): Promise<void> => {
+    const token = await getIdToken();
+
+    if (!token) {
+      throw new Error("No authentication token available. Please log in.");
+    }
+
+    const res = await axios.delete(`${baseUrl}/projects/${projectId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log(res.data);
+    return res.data;
+  };
+
   static joinProject = async (projectId: string): Promise<any> => {
     const token = await getIdToken();
 
