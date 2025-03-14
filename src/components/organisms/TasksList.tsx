@@ -9,7 +9,7 @@ interface TasksListProps {
   children?: React.ReactNode;
 }
 
-const TasksList: React.FC<TasksListProps> = ({ title, children }) => {
+const TasksList: React.FC<TasksListProps> = ({ title, status, children }) => {
   const { openTaskModal } = useTaskModal();
 
   return (
@@ -32,7 +32,7 @@ const TasksList: React.FC<TasksListProps> = ({ title, children }) => {
             bg="no-bg"
             icon={<Plus size={20} />}
             text="Create Task"
-            onClick={() => openTaskModal("add")}
+            onClick={() => openTaskModal("add", status)}
           />
         </div>
       </div>

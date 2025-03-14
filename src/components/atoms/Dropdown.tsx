@@ -3,6 +3,7 @@ import { cn } from "../../utils/tailwindMerge";
 
 type DropdownProps = {
   label?: string;
+  editable?: boolean;
   options: Record<string, string>;
   value?: string;
   error?: boolean | string;
@@ -14,6 +15,7 @@ type DropdownProps = {
 
 const Dropdown: React.FC<DropdownProps> = ({
   label,
+  editable = true,
   options,
   value,
   error = false,
@@ -44,11 +46,13 @@ const Dropdown: React.FC<DropdownProps> = ({
           value={value}
           onChange={handleChange}
           className={cn(
-            "border rounded-lg p-2 mt-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary w-48",
+            "border rounded-lg p-2 mt-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary w-48 disabled:opacity-50 disabled:cursor-not-allowed",
             error ? "border-red-500" : "border-gray-400",
+
             className
           )}
           {...restProps}
+          disabled={!editable}
         >
           {Object.entries(options).map(([key, value]) => (
             <option key={key} value={key}>

@@ -6,7 +6,7 @@ import { CommentService } from "../../services/CommentService";
 import { CommentResponseDTO } from "../../models/dtos/Comment";
 import { useProject } from "../../hooks/useProject";
 import { useTaskModal } from "../../hooks/useTaskModal";
-import { formatDateAndTime } from "../../utils/utils";
+import { formatDateAndTime } from "../../utils/dateUtils";
 
 interface CommentAreaProps {
   type: "display" | "create";

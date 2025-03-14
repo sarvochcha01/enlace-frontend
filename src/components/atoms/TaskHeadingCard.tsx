@@ -1,15 +1,15 @@
 import { Clock } from "lucide-react";
 import { useTaskModal } from "../../hooks/useTaskModal";
 import { TaskPriority } from "../../models/dtos/Task";
-import NameBubble from "./NameBubble";
-import { getInitials } from "../../utils/utils";
+import { getInitials, getNameColor } from "../../utils/nameUtils";
+import { cn } from "../../utils/tailwindMerge";
 
 interface TaskHeadingCardProps {
   id: string;
   title?: string;
   dueDate?: string;
   priority: TaskPriority;
-  assignee?: string;
+  assignedTo?: string;
 }
 
 const TaskHeadingCard: React.FC<TaskHeadingCardProps> = ({
@@ -17,7 +17,7 @@ const TaskHeadingCard: React.FC<TaskHeadingCardProps> = ({
   title,
   dueDate = "No due date",
   priority,
-  assignee,
+  assignedTo,
 }) => {
   const { openTaskModal } = useTaskModal();
 
@@ -35,10 +35,12 @@ const TaskHeadingCard: React.FC<TaskHeadingCardProps> = ({
     critical: "Critical",
   };
 
+  const nameColor = getNameColor(assignedTo || "");
+
   return (
     <button
       className="w-full bg-white p-3 rounded-lg border border-gray-200 shadow-sm hover:shadow transition-shadow cursor-pointer "
-      onClick={() => openTaskModal("display", id)}
+      onClick={() => openTaskModal("display", null, id)}
     >
       <div className="flex justify-between items-start mb-2">
         <h3 className="font-medium text-gray-800 line-clamp-2">{title}</h3>
@@ -53,9 +55,14 @@ const TaskHeadingCard: React.FC<TaskHeadingCardProps> = ({
           <Clock size={14} />
           <span>{dueDate}</span>
         </div>
-        {assignee && (
-          <div className="w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center">
-            {getInitials(assignee)}
+        {assignedTo && (
+          <div
+            className={cn(
+              "w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center",
+              nameColor
+            )}
+          >
+            {getInitials(assignedTo)}
           </div>
         )}
       </div>

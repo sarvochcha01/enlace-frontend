@@ -7,7 +7,7 @@ import { AnimatePresence } from "framer-motion";
 import { useToast } from "../../../hooks/useToast";
 import CreateProjectModal from "../../modals/CreateProjectModal";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../../hooks/auth/useAuth";
+import ProjectCard from "../../atoms/ProjectCard";
 
 const ProjectList = () => {
   const [projects, setProjects] = useState<ProjectResponseDTO[]>([]);
@@ -18,11 +18,9 @@ const ProjectList = () => {
 
   const { showToast } = useToast();
 
-  const { getIdToken } = useAuth();
-
   const closeModal = () => {
     setIsCreatePopupModalOpen(false);
-    // fetchProjects();
+    fetchProjects();
   };
 
   const fetchProjects = async () => {
@@ -42,7 +40,7 @@ const ProjectList = () => {
     fetchProjects();
   }, []);
 
-  const onProjectClicked = async (projectId: string) => {
+  const onProjectClicked = (projectId: string) => {
     navigate(`/projects/${projectId}`);
   };
 
@@ -59,23 +57,13 @@ const ProjectList = () => {
         />
       </div>
 
-      <div className="flex flex-col gap-2">
+      <div className="flex ">
         {projects.map((project) => (
-          <div
+          <ProjectCard
             key={project.id}
-            className="p-2 border border-gray-200 rounded-lg flex justify-between items-center"
-          >
-            <div>
-              <h3 className="text-lg font-medium">{project.name}</h3>
-              <p className="text-sm text-gray-500">{project.key}</p>
-            </div>
-            <ButtonWithIcon
-              icon={<Check size={20} />}
-              text="View"
-              bg="no-bg"
-              onClick={() => onProjectClicked(project.id)}
-            />
-          </div>
+            project={project}
+            onClick={() => onProjectClicked(project.id)}
+          />
         ))}
       </div>
 

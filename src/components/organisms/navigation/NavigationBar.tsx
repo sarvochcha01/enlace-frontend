@@ -41,8 +41,8 @@ const NavigationBar: FC<NavigationBarProps> = ({
           <SearchBar
             isSearching={isSearching}
             setIsSearching={setIsSearching}
-            searchKeyword={searchKeyword}
-            setSearchKeyword={setSearchKeyword}
+            searchQuery={searchKeyword}
+            setSearchQuery={setSearchKeyword}
           />
         </div>
         <ButtonWithIcon

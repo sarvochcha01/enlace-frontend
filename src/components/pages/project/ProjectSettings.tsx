@@ -10,10 +10,12 @@ import { UpdateProjectDTO } from "../../../models/dtos/Project";
 import Dropdown from "../../atoms/Dropdown";
 import { ProjectMemberService } from "../../../services/ProjectMemberService";
 import { useUser } from "../../../hooks/useUser";
+import ProjectMembersList from "../../molecules/ProjectMembersListProps";
 
 const ProjectSettings = () => {
   const { showToast } = useToast();
-  const { project, refetchProject, projectMembers } = useProject();
+  const { project, refetchProject, projectMember, projectMembers } =
+    useProject();
   const { dbUser } = useUser();
   const navigate = useNavigate();
   const { projectId } = useParams();
@@ -103,6 +105,7 @@ const ProjectSettings = () => {
     ProjectMemberService.updateProjectMember(project.id, memberId, role)
       .then(() => {
         showToast("Role updated successfully", { type: "success" });
+        setMemberRoles({ ...memberRoles, [memberId]: role });
       })
       .catch(() => {
         showToast("Error updating role", { type: "error" });
@@ -146,6 +149,7 @@ const ProjectSettings = () => {
         <div className="flex flex-col gap-4 w-full  pb-4 border-b border-gray-200">
           <InputField
             label="Project Name"
+            disabled={isUpdating || projectMember?.role !== "owner"}
             value={projectData.name}
             onChange={(value) => {
               setProjectData({ ...projectData, name: value });
@@ -154,68 +158,46 @@ const ProjectSettings = () => {
 
           <InputField
             label="Description"
+            disabled={isUpdating || projectMember?.role !== "owner"}
             value={projectData.description}
             onChange={(value) => {
               setProjectData({ ...projectData, description: value });
             }}
           />
 
-          <ButtonWithIcon
-            icon={<Check size={20} />}
-            text="Save"
-            className="w-48"
-            onClick={updateProject}
-            disabled={!isDataChanged}
-          />
+          {projectMember?.role === "owner" && (
+            <ButtonWithIcon
+              icon={<Check size={20} />}
+              text="Save"
+              className="w-48"
+              onClick={updateProject}
+              disabled={!isDataChanged}
+            />
+          )}
         </div>
       </div>
 
       <div className="flex flex-col w-full mt-4">
         <h2 className="text-lg font-semibold">Members</h2>
-        <div className="flex flex-col gap-4 w-full  pb-4 border-b border-gray-200">
-          <div className="flex flex-col gap-2">
-            {projectMembers?.map((member) => (
-              <div key={member.id} className="flex items-center">
-                <div className="flex items-center gap-2">
-                  <p>{member.name}</p>
-                  {member.userId === dbUser?.id && (
-                    <p className="text-xs text-gray-500">(YOU)</p>
-                  )}
-                </div>
-                <Dropdown
-                  flexDir="row"
-                  value={member.role}
-                  options={{
-                    owner: "Owner",
-                    editor: "Editor",
-                    viewer: "Viewer",
-                  }}
-                  onChange={(value) => {
-                    handleRoleChange(member.id, value);
-                  }}
-                />
-              </div>
-            ))}
-          </div>
-
-          <ButtonWithIcon
-            icon={<Check size={20} />}
-            text="Save"
-            className="w-48"
-            onClick={updateProject}
-            disabled={!isDataChanged}
-          />
-        </div>
+        <ProjectMembersList
+          projectMembers={projectMembers}
+          memberRoles={memberRoles}
+          currentUserId={dbUser?.id}
+          isCurrentUserOwner={projectMember?.role === "owner"}
+          onRoleChange={handleRoleChange}
+        />
       </div>
 
-      <ButtonWithIcon
-        icon={<Trash size={20} />}
-        text="Delete Project"
-        onClick={handleDeleteProject}
-        bg="no-bg"
-        className="text-red-500 mt-4"
-        disabled={isLeaving}
-      />
+      {projectMember?.role === "owner" && (
+        <ButtonWithIcon
+          icon={<Trash size={20} />}
+          text="Delete Project"
+          onClick={handleDeleteProject}
+          bg="no-bg"
+          className="text-red-500 mt-4"
+          disabled={isLeaving}
+        />
+      )}
     </div>
   );
 };

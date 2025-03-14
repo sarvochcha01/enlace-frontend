@@ -6,7 +6,12 @@ export interface TaskModalContextType {
   isTaskModalOpen: boolean;
   modalMode: TaskModalMode;
   taskId: string | null;
-  openTaskModal: (mode: TaskModalMode, id?: string) => void;
+  status: string | null;
+  openTaskModal: (
+    mode: TaskModalMode,
+    status: string | null,
+    id?: string
+  ) => void;
   closeTaskModal: () => void;
 }
 
@@ -21,11 +26,17 @@ export const TaskModalProvider: React.FC<TaskModalProviderProps> = ({
 }) => {
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<TaskModalMode>("add");
+  const [status, setStatus] = useState<string | null>(null);
   const [taskId, setTaskId] = useState<string | null>(null);
 
-  const openTaskModal = async (mode: TaskModalMode, id?: string) => {
+  const openTaskModal = async (
+    mode: TaskModalMode,
+    status: string | null,
+    id?: string
+  ) => {
     setModalMode(mode);
     setTaskId(id || null);
+    setStatus(status || null);
     setIsTaskModalOpen(true);
   };
 
@@ -42,6 +53,7 @@ export const TaskModalProvider: React.FC<TaskModalProviderProps> = ({
         isTaskModalOpen,
         modalMode,
         taskId,
+        status,
         openTaskModal,
         closeTaskModal,
       }}

@@ -1,7 +1,8 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "../../utils/tailwindMerge";
-import { getInitials } from "../../utils/utils";
+
+import { getInitials, getNameColor } from "../../utils/nameUtils";
 
 interface NameBubbleProps {
   name: string;
@@ -20,21 +21,8 @@ const NameBubble: React.FC<NameBubbleProps> = ({
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
-  const colors = [
-    "bg-red-500",
-    "bg-blue-500",
-    "bg-green-500",
-    "bg-yellow-500",
-    "bg-purple-500",
-    "bg-pink-500",
-    "bg-indigo-500",
-    "bg-teal-500",
-    "bg-orange-500",
-  ];
-
-  const randomColor = useMemo(() => {
-    return colors[Math.floor(Math.random() * colors.length)];
-  }, []);
+  // Get consistent color for this name
+  const nameColor = getNameColor(name);
 
   const handleClick = () => {
     setIsSelected && setIsSelected((prev) => !prev);
@@ -54,8 +42,8 @@ const NameBubble: React.FC<NameBubbleProps> = ({
     >
       <div
         className={cn(
-          "w-10 h-10  flex items-center justify-center rounded-full text-white  hover:cursor-pointer",
-          randomColor,
+          "w-10 h-10 flex items-center justify-center rounded-full text-white hover:cursor-pointer",
+          nameColor,
           isSelected ? "border-primary border-[3px]" : "border-white border-2"
         )}
       >

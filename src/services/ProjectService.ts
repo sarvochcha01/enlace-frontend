@@ -112,7 +112,6 @@ export class ProjectService {
       },
     });
 
-    console.log(res.data);
     return res.data;
   };
 

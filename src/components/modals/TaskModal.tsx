@@ -11,10 +11,10 @@ import { useProject } from "../../hooks/useProject";
 import ButtonWithIcon from "../atoms/ButtonWithIcon";
 import { Check, X } from "lucide-react";
 import { TaskService } from "../../services/TaskService";
-import { formatDateAndTime } from "../../utils/utils";
 import { CommentService } from "../../services/CommentService";
 import { CommentResponseDTO } from "../../models/dtos/Comment";
 import CommentsSection from "../organisms/CommentSection";
+import { formatDateAndTime } from "../../utils/dateUtils";
 
 interface TaskModalProps {
   closeModal: () => void;
@@ -23,7 +23,7 @@ interface TaskModalProps {
 const TaskModal: React.FC<TaskModalProps> = ({ closeModal }) => {
   const { showToast } = useToast();
   const { project, projectMember } = useProject();
-  const { modalMode, taskId } = useTaskModal();
+  const { modalMode, taskId, status } = useTaskModal();
 
   const [isCreatingTask, setIsCreatingTask] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -154,6 +154,8 @@ const TaskModal: React.FC<TaskModalProps> = ({ closeModal }) => {
     if (modalMode === "display") {
       getTask();
       fetchComments();
+    } else if (modalMode === "add") {
+      setValue("status", status ?? "todo");
     }
   }, [modalMode]);
 

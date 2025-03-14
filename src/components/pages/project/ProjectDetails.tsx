@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { useToast } from "../../../hooks/useToast";
+
 import SearchBar from "../../atoms/SearchBar";
 import NameBubble from "../../atoms/NameBubble";
 import TasksList from "../../organisms/TasksList";
 import TaskHeadingCard from "../../atoms/TaskHeadingCard";
-import { formatDate } from "../../../utils/utils";
+
 import ButtonWithIcon from "../../atoms/ButtonWithIcon";
 import { Plus, Settings } from "lucide-react";
 import { useTaskModal } from "../../../hooks/useTaskModal";
@@ -14,11 +14,11 @@ import { AnimatePresence } from "framer-motion";
 import { useProject } from "../../../hooks/useProject";
 import { TaskResponseDTO } from "../../../models/dtos/Task";
 import { ProjectFilters } from "../../../models/ProjectFilters";
+import { formatDate } from "../../../utils/dateUtils";
 
 const ProjectDetails = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
   const [assignedToFilter, setAssignedToFilter] = useState("");
 
   const [filters, setFilters] = useState<ProjectFilters | null>(null);
@@ -26,7 +26,6 @@ const ProjectDetails = () => {
     null
   );
 
-  const { showToast } = useToast();
   const { isTaskModalOpen, openTaskModal, closeTaskModal } = useTaskModal();
   const {
     project,
@@ -34,6 +33,7 @@ const ProjectDetails = () => {
     setProjectMembers,
     setProjectMember,
     isLoading,
+    refetchProject,
   } = useProject();
 
   const navigate = useNavigate();
@@ -63,13 +63,7 @@ const ProjectDetails = () => {
       assignedTo: assignedToFilter,
     };
     setFilters(filterSettings);
-  }, [searchQuery, statusFilter, assignedToFilter, setFilters]);
-
-  const clearFilters = () => {
-    setSearchQuery("");
-    setStatusFilter("");
-    setAssignedToFilter("");
-  };
+  }, [searchQuery, assignedToFilter, setFilters]);
 
   const toggleAssigneeFilter = (memberId: string) => {
     if (assignedToFilter === memberId) {
@@ -140,7 +134,7 @@ const ProjectDetails = () => {
             <ButtonWithIcon
               icon={<Plus size={20} />}
               text="Create Task"
-              onClick={() => openTaskModal("add")}
+              onClick={() => openTaskModal("add", "todo")}
             />
           </div>
         </div>
@@ -160,7 +154,7 @@ const ProjectDetails = () => {
                   dueDate={
                     task.dueDate ? formatDate(task.dueDate) : "No due date"
                   }
-                  assignee={task.assignedTo?.name}
+                  assignedTo={task.assignedTo?.name}
                 />
               ))}
           </TasksList>
@@ -177,7 +171,7 @@ const ProjectDetails = () => {
                   dueDate={
                     task.dueDate ? formatDate(task.dueDate) : "No due date"
                   }
-                  assignee={task.assignedTo?.name}
+                  assignedTo={task.assignedTo?.name}
                 />
               ))}
           </TasksList>
@@ -194,7 +188,7 @@ const ProjectDetails = () => {
                   dueDate={
                     task.dueDate ? formatDate(task.dueDate) : "No due date"
                   }
-                  assignee={task.assignedTo?.name}
+                  assignedTo={task.assignedTo?.name}
                 />
               ))}
           </TasksList>
@@ -205,6 +199,7 @@ const ProjectDetails = () => {
         {isTaskModalOpen && (
           <TaskModal
             closeModal={() => {
+              refetchProject();
               closeTaskModal();
             }}
           />

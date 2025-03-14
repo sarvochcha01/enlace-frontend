@@ -45,7 +45,7 @@ const InputField: React.FC<InputFieldProps> = ({
           value={value}
           onChange={handleChange}
           className={cn(
-            "border rounded-lg p-2 mt-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary w-48",
+            "border rounded-lg p-2 mt-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary w-48 disabled:opacity-50 disabled:cursor-not-allowed",
             error ? "border-red-500 " : "border-gray-400 ",
             className
           )}
