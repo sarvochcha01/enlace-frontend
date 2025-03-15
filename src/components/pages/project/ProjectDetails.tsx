@@ -40,8 +40,9 @@ const ProjectDetails = () => {
 
   useEffect(() => {
     if (!project) return;
+    console.log("Project", project);
 
-    const filteredTasks = project.tasks.filter((task) => {
+    const filteredTasks = project.tasks?.filter((task) => {
       if (!filters) return true;
 
       const searchMatch =
