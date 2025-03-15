@@ -1,10 +1,11 @@
 import axios from "axios";
-import { User } from "firebase/auth";
-import { baseUrl, LogType } from "../utils/utils";
 import { getIdToken } from "../singletons/Auth";
+import { User } from "../models/dtos/User";
+import { User as FirebaseUser } from "firebase/auth";
+import { baseUrl } from "../utils/utils";
 
 export class UserService {
-  static async CreateUser(user: User) {
+  static async CreateUser(user: FirebaseUser) {
     const payload = {
       firebaseUID: user.uid,
       name: user.displayName,
@@ -20,9 +21,9 @@ export class UserService {
         throw new Error("Backend user creation failed");
       }
 
-      console.log(LogType.Log, response?.data);
+      console.log(response?.data);
     } catch (backendError) {
-      console.error(LogType.Error, backendError);
+      console.error(backendError);
       // Delete Firebase user if backend request fails
       await user.delete();
       console.error("Backend user creation failed. Firebase user deleted.");
@@ -42,5 +43,30 @@ export class UserService {
     });
 
     return res.data;
+  };
+
+  static SearchUser = async (value: string): Promise<User[]> => {
+    const token = await getIdToken();
+
+    if (!token) {
+      throw new Error("No authentication token available. Please log in.");
+    }
+
+    try {
+      const res = await axios.post<User[]>(
+        `${baseUrl}/users/search`,
+        { query: value },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      return res.data;
+    } catch (error) {
+      console.error("Error searching user:", error);
+      throw error;
+    }
   };
 }

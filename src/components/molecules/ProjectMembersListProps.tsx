@@ -18,7 +18,7 @@ const ProjectMembersList: React.FC<ProjectMembersListProps> = ({
   onRoleChange,
 }) => {
   return (
-    <div className="flex flex-col gap-4 w-full pb-4 border-b border-gray-200">
+    <div className="flex flex-col gap-4 w-full  mt-4">
       <div className="flex flex-col gap-2">
         {projectMembers
           ?.sort((a, b) => {
@@ -31,10 +31,15 @@ const ProjectMembersList: React.FC<ProjectMembersListProps> = ({
           .map((member) => (
             <div key={member.id} className="flex items-center">
               <div className="flex items-center gap-2 min-w-96">
-                <p>{member.name}</p>
-                {member.userId === currentUserId && (
-                  <p className="text-xs text-gray-500">(YOU)</p>
-                )}
+                <div className="flex flex-col">
+                  <div className="flex items-center gap-1">
+                    {member.name}{" "}
+                    {member.userId === currentUserId && (
+                      <div className="text-xs text-gray-500">(YOU)</div>
+                    )}
+                  </div>
+                  <div className="text-sm">{member.email}</div>
+                </div>
               </div>
               <Dropdown
                 flexDir="row"

@@ -23,11 +23,12 @@ import ProjectDetails from "./components/pages/project/ProjectDetails.tsx";
 import { TaskModalProvider } from "./context/TaskModalContext.tsx";
 import { ProjectProvider } from "./context/ProjectContext.tsx";
 import { UserProvider } from "./context/UserContext.tsx";
-import JoinProject from "./components/pages/project/JoinProject.tsx";
+
 import ProjectSettings from "./components/pages/project/ProjectSettings.tsx";
 import Project from "./components/pages/project/Project.tsx";
-import NotFound404 from "./components/pages/error/NotFound404.tsx";
-import ServerError from "./components/pages/error/ServerError.tsx";
+import NotFound404 from "./components/pages/status/NotFound404.tsx";
+import Health from "./components/pages/status/Health.tsx";
+import Notifications from "./components/pages/Notifications.tsx";
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const { user, loading } = useAuth();
@@ -72,12 +73,12 @@ const router = createBrowserRouter(
             <Route index element={<ProjectDetails />} />
             <Route path="settings" element={<ProjectSettings />} />
           </Route>
-          <Route path=":projectId/join" element={<JoinProject />} />
         </Route>
+        <Route path="notifications" element={<Notifications />} />
         <Route path="settings" element={<Settings />} />
       </Route>
 
-      <Route path="health" element={<ServerError />} />
+      <Route path="health" element={<Health />} />
     </Route>
   )
 );

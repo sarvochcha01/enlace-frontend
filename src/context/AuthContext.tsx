@@ -8,7 +8,6 @@ import {
 } from "firebase/auth";
 import { createContext, useEffect, useState } from "react";
 import { auth } from "../firebaseConfig";
-import { LogType } from "../utils/utils";
 import { setAuthInstance } from "../singletons/Auth";
 
 export interface AuthContextType {
@@ -60,7 +59,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       await signOut(auth);
       setUser(null);
     } catch (error) {
-      console.error(LogType.Error, error);
+      console.error(error);
     }
   };
 
@@ -72,7 +71,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       return await user.getIdToken();
     } catch (error) {
-      console.error(LogType.Error, "Failed to get ID token:", error);
+      console.error("Failed to get ID token:", error);
       throw error;
     }
   };

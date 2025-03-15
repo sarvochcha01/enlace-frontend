@@ -1,3 +1,4 @@
+import { InvitationResponseDTO } from "./Invitation";
 import { ProjectMemberResponseDTO } from "./ProjectMember";
 import { TaskResponseDTO } from "./Task";
 import { User } from "./User";
@@ -8,6 +9,7 @@ export interface ProjectResponseDTO {
   description: string;
   key: string;
   createdBy: User;
+  invitations: InvitationResponseDTO[];
   projectMembers: ProjectMemberResponseDTO[];
   tasks: TaskResponseDTO[];
   createdAt: string;

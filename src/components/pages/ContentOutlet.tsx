@@ -42,7 +42,7 @@ const ContentOutlet = () => {
       return userData;
     } catch (error) {
       console.error("Error fetching user data", error);
-      navigate("/down");
+      navigate("/health");
     }
   };
 

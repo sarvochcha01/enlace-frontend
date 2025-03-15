@@ -1,16 +1,20 @@
 import { useEffect, useState } from "react";
 import ButtonWithIcon from "../../atoms/ButtonWithIcon";
-import { Check, ChevronLeft, LogOut, Trash } from "lucide-react";
+import { Check, ChevronLeft, LogOut, Plus, Trash } from "lucide-react";
 import { useProject } from "../../../hooks/useProject";
 import { ProjectService } from "../../../services/ProjectService";
 import { useToast } from "../../../hooks/useToast";
 import { useNavigate, useParams } from "react-router-dom";
 import InputField from "../../atoms/InputField";
 import { UpdateProjectDTO } from "../../../models/dtos/Project";
-import Dropdown from "../../atoms/Dropdown";
 import { ProjectMemberService } from "../../../services/ProjectMemberService";
 import { useUser } from "../../../hooks/useUser";
 import ProjectMembersList from "../../molecules/ProjectMembersListProps";
+import SearchableDropdown from "../../molecules/SearchableDropdown";
+import { UserService } from "../../../services/UserService";
+import { User } from "../../../models/dtos/User";
+import InviteMemberModal from "../../modals/InviteMemberModal";
+import { AnimatePresence } from "framer-motion";
 
 const ProjectSettings = () => {
   const { showToast } = useToast();
@@ -30,6 +34,9 @@ const ProjectSettings = () => {
   const [isUpdating, setIsUpdating] = useState(false);
 
   const [memberRoles, setMemberRoles] = useState<Record<string, string>>({});
+
+  const [isAddProjectMemberModalOpen, setIsAddProjectMemberModalOpen] =
+    useState(false);
 
   useEffect(() => {
     if (project) {
@@ -177,8 +184,15 @@ const ProjectSettings = () => {
         </div>
       </div>
 
-      <div className="flex flex-col w-full mt-4">
+      <div className="flex flex-col w-full mt-4 pb-4 border-b border-gray-200">
         <h2 className="text-lg font-semibold">Members</h2>
+
+        <ButtonWithIcon
+          icon={<Plus size={20} />}
+          text="Add People"
+          className="w-48 mt-2"
+          onClick={() => setIsAddProjectMemberModalOpen(true)}
+        />
         <ProjectMembersList
           projectMembers={projectMembers}
           memberRoles={memberRoles}
@@ -186,6 +200,22 @@ const ProjectSettings = () => {
           isCurrentUserOwner={projectMember?.role === "owner"}
           onRoleChange={handleRoleChange}
         />
+
+        <div className="flex flex-col mt-2">
+          {project?.invitations.map((invitation) => {
+            return (
+              <div key={invitation.id} className="flex flex-col">
+                <div className="flex items-center gap-1">
+                  {invitation.name}{" "}
+                  <div className="text-xs text-gray-500">
+                    ({invitation.status})
+                  </div>
+                </div>
+                <div className="text-sm">{invitation.email}</div>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       {projectMember?.role === "owner" && (
@@ -198,6 +228,14 @@ const ProjectSettings = () => {
           disabled={isLeaving}
         />
       )}
+
+      <AnimatePresence>
+        {isAddProjectMemberModalOpen && (
+          <InviteMemberModal
+            onClose={() => setIsAddProjectMemberModalOpen(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

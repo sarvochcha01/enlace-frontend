@@ -6,6 +6,7 @@ import { getInitials, getNameColor } from "../../utils/nameUtils";
 
 interface NameBubbleProps {
   name: string;
+  showTooltip?: boolean;
   setIsSelected?: React.Dispatch<React.SetStateAction<boolean>>;
   isSelected?: boolean;
   zIndex?: number;
@@ -14,6 +15,7 @@ interface NameBubbleProps {
 
 const NameBubble: React.FC<NameBubbleProps> = ({
   name,
+  showTooltip = true,
   isSelected,
   setIsSelected,
   zIndex = 1,
@@ -44,13 +46,13 @@ const NameBubble: React.FC<NameBubbleProps> = ({
         className={cn(
           "w-10 h-10 flex items-center justify-center rounded-full text-white hover:cursor-pointer",
           nameColor,
-          isSelected ? "border-primary border-[3px]" : "border-white border-2"
+          isSelected ? "border-primary border-[3px]" : ""
         )}
       >
         {getInitials(name)}
       </div>
       <AnimatePresence>
-        {isHovered && (
+        {isHovered && showTooltip && (
           <motion.div
             className={cn(
               "absolute text-xs top-12 bg-gray-700 text-white px-2 py-1 rounded whitespace-nowrap"

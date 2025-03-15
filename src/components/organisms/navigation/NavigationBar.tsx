@@ -56,9 +56,9 @@ const NavigationBar: FC<NavigationBarProps> = ({
         />
       </div>
       <div className="w-1/5 h-full flex items-center justify-end gap-4 pr-4">
-        <button>
+        <Link to="notifications">
           <Bell size={20} />
-        </button>
+        </Link>
         <Link to="settings">
           <Settings size={20} />
         </Link>
