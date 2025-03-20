@@ -17,6 +17,8 @@ interface SearchableDropdownProps<T extends HasId> {
   getDisplayValue: (item: T) => string;
   getPrimaryText: (item: T) => string;
   getSecondaryText: (item: T) => string;
+  shouldAllowSelection?: (item: T) => boolean;
+  notAllowedText?: (item: T) => string;
 }
 
 const SearchableDropdown = <T extends HasId>({
@@ -29,6 +31,8 @@ const SearchableDropdown = <T extends HasId>({
   getDisplayValue,
   getPrimaryText,
   getSecondaryText,
+  shouldAllowSelection = () => true,
+  notAllowedText = () => "Not allowed",
 }: SearchableDropdownProps<T>) => {
   const [isSearching, setIsSearching] = useState(false);
   const [results, setResults] = useState<T[]>([]);
@@ -55,11 +59,11 @@ const SearchableDropdown = <T extends HasId>({
   }, [searchValue, onSearchFunction]);
 
   const handleSelectItem = (item: T) => {
-    if (onItemSelect) {
+    if (onItemSelect && shouldAllowSelection(item)) {
       onItemSelect(item);
+      setSearchValue(getDisplayValue(item));
+      setIsSearching(false);
     }
-    setSearchValue(getDisplayValue(item));
-    setIsSearching(false);
   };
 
   return (
@@ -84,18 +88,36 @@ const SearchableDropdown = <T extends HasId>({
           {isLoading ? (
             <div className="p-3 text-center text-gray-500">Loading...</div>
           ) : results.length > 0 ? (
-            results.map((item) => (
-              <div
-                key={item.id}
-                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                onMouseDown={() => handleSelectItem(item)}
-              >
-                <div className="font-medium">{getPrimaryText(item)}</div>
-                <div className="text-sm text-gray-500">
-                  {getSecondaryText(item)}
+            results.map((item) => {
+              const isSelectable = shouldAllowSelection(item);
+              return (
+                <div
+                  key={item.id}
+                  className={`px-4 py-2 ${
+                    isSelectable
+                      ? "hover:bg-gray-100 cursor-pointer"
+                      : "text-gray-400 cursor-not-allowed"
+                  }`}
+                  onMouseDown={(e) => {
+                    if (!isSelectable) {
+                      e.preventDefault();
+                      return;
+                    }
+                    handleSelectItem(item);
+                  }}
+                >
+                  <div className="font-medium">{getPrimaryText(item)}</div>
+                  <div className="text-sm text-gray-500">
+                    {getSecondaryText(item)}
+                  </div>
+                  {!isSelectable && (
+                    <div className="text-xs text-red-500 italic">
+                      {notAllowedText(item)}
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))
+              );
+            })
           ) : searchValue.trim() ? (
             <div className="p-3 text-center text-gray-500">
               No results found

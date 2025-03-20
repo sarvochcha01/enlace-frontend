@@ -30,7 +30,7 @@ export class InvitationService {
       console.log(res?.data);
       return res?.data;
     } catch (backendError) {
-      console.error(backendError);
+      throw backendError;
     }
   }
 }

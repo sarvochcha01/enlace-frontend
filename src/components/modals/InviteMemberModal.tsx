@@ -8,6 +8,7 @@ import NameBubble from "../atoms/NameBubble";
 import { Plus, X } from "lucide-react";
 import ButtonWithIcon from "../atoms/ButtonWithIcon";
 import { InvitationService } from "../../services/InvitationService";
+import { useToast } from "../../hooks/useToast";
 
 interface InviteMemberModalProps {
   onClose: () => void;
@@ -18,7 +19,35 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({ onClose }) => {
   const [isMemberSelected, setIsMemberSelected] = useState(false);
   const [selectedMember, setSelectedMember] = useState<User | null>(null);
 
+  const [isSendingInvite, setIsSendingInvite] = useState(false);
+
   const { project } = useProject();
+  const { showToast } = useToast();
+
+  const handleInvite = async () => {
+    if (!project || !selectedMember) {
+      return;
+    }
+
+    setIsSendingInvite(true);
+    InvitationService.InviteUserToProject(
+      project?.id || "",
+      selectedMember?.id || ""
+    )
+      .then((res) => {
+        console.log(res);
+        showToast("User invited", { type: "success" });
+        onClose();
+      })
+      .catch((err) => {
+        console.error(err);
+        showToast("Failed to invite user", { type: "error" });
+      })
+      .finally(() => {
+        setIsSendingInvite(false);
+      });
+  };
+
   return (
     <motion.div
       className="fixed inset-0 z-10 flex items-center justify-center"
@@ -77,6 +106,31 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({ onClose }) => {
                 setIsMemberSelected(true);
                 setSelectedMember(user);
               }}
+              shouldAllowSelection={(user) =>
+                !project?.projectMembers.some(
+                  (member) => member.userId === user.id
+                ) &&
+                !project?.invitations.some(
+                  (invitation) => invitation.invitedUserId === user.id
+                )
+              }
+              notAllowedText={(user) => {
+                if (
+                  project?.projectMembers.some(
+                    (member) => member.userId === user.id
+                  )
+                ) {
+                  return "User is already a project member";
+                }
+                if (
+                  project?.invitations.some(
+                    (invitation) => invitation.invitedUserId === user.id
+                  )
+                ) {
+                  return "User is already invited to the project";
+                }
+                return "";
+              }}
               getDisplayValue={(user) => `${user.email} - ${user.name}`}
               getPrimaryText={(user) => user.name}
               getSecondaryText={(user) => user.email}
@@ -95,15 +149,8 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({ onClose }) => {
           <ButtonWithIcon
             icon={<Plus size={20} />}
             text={`Add ${selectedMember?.name || "Member"}`}
-            onClick={async () => {
-              console.log("Invite", selectedMember);
-              const res = await InvitationService.InviteUserToProject(
-                project?.id || "",
-                selectedMember?.id || ""
-              );
-              console.log(res);
-            }}
-            disabled={!isMemberSelected}
+            onClick={handleInvite}
+            disabled={!isMemberSelected || isSendingInvite}
           />
         </div>
       </motion.div>
