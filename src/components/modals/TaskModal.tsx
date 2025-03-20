@@ -108,12 +108,19 @@ const TaskModal: React.FC<TaskModalProps> = ({ closeModal }) => {
   };
 
   const fetchComments = async () => {
-    const commentsRes = await CommentService.getAllComments(
-      project!.id,
-      taskId!
-    );
-
-    setComments(commentsRes);
+    try {
+      setIsLoading(true);
+      const commentsRes = await CommentService.getAllComments(
+        project!.id,
+        taskId!
+      );
+      setComments(commentsRes);
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+      showToast("Failed to load comments", { type: "error" });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const getTask = async () => {

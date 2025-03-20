@@ -106,17 +106,19 @@ const ProjectSettings = () => {
 
   const handleRoleChange = async (memberId: string, role: string) => {
     if (!project) return;
-
     console.log(memberId, role);
 
-    ProjectMemberService.updateProjectMember(project.id, memberId, role)
-      .then(() => {
-        showToast("Role updated successfully", { type: "success" });
-        setMemberRoles({ ...memberRoles, [memberId]: role });
-      })
-      .catch(() => {
-        showToast("Error updating role", { type: "error" });
-      });
+    try {
+      await ProjectMemberService.updateProjectMember(
+        project.id,
+        memberId,
+        role
+      );
+      showToast("Role updated successfully", { type: "success" });
+      setMemberRoles({ ...memberRoles, [memberId]: role });
+    } catch (error) {
+      showToast("Error updating role", { type: "error" });
+    }
   };
 
   const handleDeleteProject = async () => {

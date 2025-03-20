@@ -24,13 +24,17 @@ export class ProjectService {
       throw new Error("No authentication token available. Please log in.");
     }
 
-    const res = await axios.get(`${baseUrl}/projects/${projectID}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    try {
+      const res = await axios.get(`${baseUrl}/projects/${projectID}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    return res.data;
+      return res.data;
+    } catch (error) {
+      throw error;
+    }
   };
 
   static getProjects = async (): Promise<ProjectResponseDTO[]> => {

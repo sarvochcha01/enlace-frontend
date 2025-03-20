@@ -30,22 +30,21 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({ onClose }) => {
     }
 
     setIsSendingInvite(true);
-    InvitationService.InviteUserToProject(
-      project?.id || "",
-      selectedMember?.id || ""
-    )
-      .then((res) => {
-        console.log(res);
-        showToast("User invited", { type: "success" });
-        onClose();
-      })
-      .catch((err) => {
-        console.error(err);
-        showToast("Failed to invite user", { type: "error" });
-      })
-      .finally(() => {
-        setIsSendingInvite(false);
-      });
+
+    try {
+      const res = await InvitationService.InviteUserToProject(
+        project?.id || "",
+        selectedMember?.id || ""
+      );
+      console.log(res);
+      showToast("User invited", { type: "success" });
+      onClose();
+    } catch (err) {
+      console.error(err);
+      showToast("Failed to invite user", { type: "error" });
+    } finally {
+      setIsSendingInvite(false);
+    }
   };
 
   return (
