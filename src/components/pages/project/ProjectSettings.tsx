@@ -38,6 +38,9 @@ const ProjectSettings = () => {
   const [isAddProjectMemberModalOpen, setIsAddProjectMemberModalOpen] =
     useState(false);
 
+  const isProjectCreator = project?.createdBy.id === dbUser?.id;
+  const isOwner = projectMember?.role === "owner";
+
   useEffect(() => {
     if (project) {
       setProjectData({
@@ -143,14 +146,17 @@ const ProjectSettings = () => {
             navigate(`/projects/${projectId}`);
           }}
         />
-        <ButtonWithIcon
-          icon={<LogOut size={20} />}
-          text="Leave Project"
-          onClick={leaveProject}
-          bg="no-bg"
-          className="text-red-500"
-          disabled={isLeaving}
-        />
+
+        {isProjectCreator && (
+          <ButtonWithIcon
+            icon={<LogOut size={20} />}
+            text="Leave Project"
+            onClick={leaveProject}
+            bg="no-bg"
+            className="text-red-500"
+            disabled={isLeaving}
+          />
+        )}
       </div>
 
       <div className="flex flex-col w-full mt-4">
@@ -189,12 +195,14 @@ const ProjectSettings = () => {
       <div className="flex flex-col w-full mt-4 pb-4 border-b border-gray-200">
         <h2 className="text-lg font-semibold">Members</h2>
 
-        <ButtonWithIcon
-          icon={<Plus size={20} />}
-          text="Add People"
-          className="w-48 mt-2"
-          onClick={() => setIsAddProjectMemberModalOpen(true)}
-        />
+        {isOwner && (
+          <ButtonWithIcon
+            icon={<Plus size={20} />}
+            text="Add People"
+            className="w-48 mt-2"
+            onClick={() => setIsAddProjectMemberModalOpen(true)}
+          />
+        )}
         <ProjectMembersList
           projectMembers={projectMembers}
           memberRoles={memberRoles}
@@ -220,7 +228,7 @@ const ProjectSettings = () => {
         </div>
       </div>
 
-      {projectMember?.role === "owner" && (
+      {isProjectCreator && (
         <ButtonWithIcon
           icon={<Trash size={20} />}
           text="Delete Project"
