@@ -9,6 +9,7 @@ interface NameBubbleProps {
   showTooltip?: boolean;
   setIsSelected?: React.Dispatch<React.SetStateAction<boolean>>;
   isSelected?: boolean;
+  isFilter?: boolean;
   zIndex?: number;
   onClick?: () => void;
 }
@@ -17,6 +18,7 @@ const NameBubble: React.FC<NameBubbleProps> = ({
   name,
   showTooltip = true,
   isSelected,
+  isFilter,
   setIsSelected,
   zIndex = 1,
   onClick,
@@ -36,7 +38,7 @@ const NameBubble: React.FC<NameBubbleProps> = ({
 
   return (
     <div
-      className="relative flex flex-col items-center z-10"
+      className="relative flex flex-col items-center"
       style={{ zIndex: isHovered || isSelected ? zIndex + 1 : zIndex }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -46,6 +48,7 @@ const NameBubble: React.FC<NameBubbleProps> = ({
         className={cn(
           "w-10 h-10 flex items-center justify-center rounded-full text-white hover:cursor-pointer",
           nameColor,
+          isFilter ? "border-2 border-white" : "",
           isSelected ? "border-primary border-[3px]" : ""
         )}
       >

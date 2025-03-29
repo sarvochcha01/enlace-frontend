@@ -361,14 +361,20 @@ const TaskModal: React.FC<TaskModalProps> = ({ closeModal }) => {
                     />
                   )}
 
-                  {taskData?.createdBy.id === projectMember?.id && (
+                  {/* {taskData?.createdBy.id === projectMember?.id && (
                     <ButtonWithIcon
                       icon={<Check size={20} />}
                       text="Delete Task"
                       type="button"
                       onClick={handleTaskDelete}
                     />
-                  )}
+                  )} */}
+                  <ButtonWithIcon
+                    icon={<Check size={20} />}
+                    text="Delete Task"
+                    type="button"
+                    onClick={handleTaskDelete}
+                  />
                   {modalMode === "display" && hasChanges && (
                     <div className="text-xs text-red-500 absolute bottom-4 right-4">
                       * Unsaved changes

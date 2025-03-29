@@ -125,6 +125,7 @@ const ProjectDetails = () => {
                   name={member.name}
                   zIndex={arr.length - index}
                   isSelected={assignedToFilter === member.id}
+                  isFilter={true}
                   onClick={() => toggleAssigneeFilter(member.id)}
                 />
               ))}
@@ -196,11 +197,10 @@ const ProjectDetails = () => {
         </div>
       </div>
 
-      <AnimatePresence>
+      <AnimatePresence onExitComplete={refetchProject}>
         {isTaskModalOpen && (
           <TaskModal
             closeModal={() => {
-              refetchProject();
               closeTaskModal();
             }}
           />

@@ -29,6 +29,8 @@ import Project from "./components/pages/project/Project.tsx";
 import NotFound404 from "./components/pages/status/NotFound404.tsx";
 import Health from "./components/pages/status/Health.tsx";
 import Notifications from "./components/pages/Notifications.tsx";
+import { NotificationProvider } from "./context/NotificationContext.tsx";
+import TaskDetails from "./components/pages/tasks/TaskDetails.tsx";
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const { user, loading } = useAuth();
@@ -72,6 +74,7 @@ const router = createBrowserRouter(
           >
             <Route index element={<ProjectDetails />} />
             <Route path="settings" element={<ProjectSettings />} />
+            <Route path="tasks/:taskId" element={<TaskDetails />} />
           </Route>
         </Route>
         <Route path="notifications" element={<Notifications />} />
@@ -86,11 +89,13 @@ const router = createBrowserRouter(
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <AuthProvider>
-      <ToastProvider>
-        <UserProvider>
-          <RouterProvider router={router} />
-        </UserProvider>
-      </ToastProvider>
+      <NotificationProvider>
+        <ToastProvider>
+          <UserProvider>
+            <RouterProvider router={router} />
+          </UserProvider>
+        </ToastProvider>
+      </NotificationProvider>
     </AuthProvider>
   </StrictMode>
 );

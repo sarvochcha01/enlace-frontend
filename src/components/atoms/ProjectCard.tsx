@@ -44,7 +44,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
       {/* Creator info section */}
       <div className="px-4 py-2 border-t border-gray-100">
         <div className="flex items-center">
-          <NameBubble name={project.createdBy.name} />
+          <NameBubble
+            name={project.createdBy.name}
+            isFilter={false}
+            showTooltip={false}
+          />
           <span className="text-xs text-gray-500 ml-2 truncate">
             {project.createdBy.name}
           </span>

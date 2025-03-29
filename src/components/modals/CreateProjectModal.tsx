@@ -45,7 +45,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
 
   return (
     <motion.div
-      className="fixed inset-0 flex flex-col p-4 bg-white "
+      className="fixed inset-0 flex flex-col p-4 bg-white z-10"
       initial={{ opacity: 0, x: "-100%" }}
       animate={{ opacity: 1, x: "0%" }}
       exit={{ opacity: 0, x: "-100%" }}

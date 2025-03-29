@@ -147,7 +147,7 @@ const ProjectSettings = () => {
           }}
         />
 
-        {isProjectCreator && (
+        {!isProjectCreator && (
           <ButtonWithIcon
             icon={<LogOut size={20} />}
             text="Leave Project"

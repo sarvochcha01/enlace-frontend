@@ -20,6 +20,9 @@ const ProjectList = () => {
 
   const closeModal = () => {
     setIsCreatePopupModalOpen(false);
+  };
+
+  const onModalClosed = () => {
     fetchProjects();
   };
 
@@ -67,7 +70,7 @@ const ProjectList = () => {
         ))}
       </div>
 
-      <AnimatePresence>
+      <AnimatePresence onExitComplete={onModalClosed}>
         {isCreatePopupModalOpen && (
           <CreateProjectModal closeModal={closeModal} />
         )}
