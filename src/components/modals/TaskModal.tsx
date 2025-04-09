@@ -8,7 +8,7 @@ import TextAreaField from "../atoms/TextAreaField";
 import { useTaskModal } from "../../hooks/useTaskModal";
 import FormDropdown from "../atoms/FormDropdown";
 import { useProject } from "../../hooks/useProject";
-import ButtonWithIcon from "../atoms/ButtonWithIcon";
+import Button from "../atoms/Button";
 import { Check, X } from "lucide-react";
 import { TaskService } from "../../services/TaskService";
 import { CommentService } from "../../services/CommentService";
@@ -335,7 +335,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ closeModal }) => {
                 </div>
 
                 <div className="w-full flex justify-center gap-6 mt-12">
-                  <ButtonWithIcon
+                  <Button
                     icon={<X size={20} />}
                     text="Close"
                     type="button"
@@ -344,7 +344,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ closeModal }) => {
                     disabled={isCreatingTask}
                   />
                   {modalMode === "add" && (
-                    <ButtonWithIcon
+                    <Button
                       icon={<Check size={20} />}
                       text="Create Task"
                       type="submit"
@@ -352,7 +352,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ closeModal }) => {
                     />
                   )}
                   {modalMode === "display" && (
-                    <ButtonWithIcon
+                    <Button
                       icon={<Check size={20} />}
                       text="Update Task"
                       type="submit"
@@ -369,7 +369,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ closeModal }) => {
                       onClick={handleTaskDelete}
                     />
                   )} */}
-                  <ButtonWithIcon
+                  <Button
                     icon={<Check size={20} />}
                     text="Delete Task"
                     type="button"

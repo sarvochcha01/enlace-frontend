@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Check, X } from "lucide-react";
 import React, { useState } from "react";
 import FormInputField from "../atoms/FormInputField";
-import ButtonWithIcon from "../atoms/ButtonWithIcon";
+import Button from "../atoms/Button";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { CreateProjectDTO } from "../../models/dtos/Project";
 import { ProjectService } from "../../services/ProjectService";
@@ -123,7 +123,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
         </div>
 
         <div className="mt-4 flex justify-center">
-          <ButtonWithIcon
+          <Button
             icon={<Check size={20} />}
             text="Create Project"
             type="submit"

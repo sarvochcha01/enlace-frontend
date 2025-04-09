@@ -3,6 +3,7 @@ import { useTaskModal } from "../../hooks/useTaskModal";
 import { TaskPriority } from "../../models/dtos/Task";
 import { getInitials, getNameColor } from "../../utils/nameUtils";
 import { cn } from "../../utils/tailwindMerge";
+import { useNavigate } from "react-router-dom";
 
 interface TaskHeadingCardProps {
   id: string;
@@ -19,7 +20,7 @@ const TaskHeadingCard: React.FC<TaskHeadingCardProps> = ({
   priority,
   assignedTo,
 }) => {
-  const { openTaskModal } = useTaskModal();
+  const navigate = useNavigate();
 
   const priorityColors = {
     low: "bg-green-100 text-green-800",
@@ -40,7 +41,7 @@ const TaskHeadingCard: React.FC<TaskHeadingCardProps> = ({
   return (
     <button
       className="w-full bg-white p-3 rounded-lg border border-gray-200 shadow-sm hover:shadow transition-shadow cursor-pointer "
-      onClick={() => openTaskModal("display", null, id)}
+      onClick={() => navigate(`tasks/${id}`)}
     >
       <div className="flex justify-between items-start mb-2">
         <h3 className="font-medium text-gray-800 line-clamp-2">{title}</h3>

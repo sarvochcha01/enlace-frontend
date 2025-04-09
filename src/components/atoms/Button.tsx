@@ -1,7 +1,7 @@
 import { cn } from "../../utils/tailwindMerge";
 
-interface ButtonWithIconProps {
-  icon: React.ReactNode;
+interface ButtonProps {
+  icon?: React.ReactNode;
   text: string;
   onClick?: () => void;
   bg?: "no-bg";
@@ -10,7 +10,7 @@ interface ButtonWithIconProps {
   className?: string;
 }
 
-const ButtonWithIcon: React.FC<ButtonWithIconProps> = ({
+const Button: React.FC<ButtonProps> = ({
   icon,
   text,
   onClick,
@@ -24,7 +24,7 @@ const ButtonWithIcon: React.FC<ButtonWithIconProps> = ({
       type={type}
       disabled={disabled}
       className={cn(
-        "flex gap-1 items-center justify-center rounded-lg px-4 py-2",
+        "flex gap-1 items-center justify-center  px-4 py-2",
         bg == "no-bg"
           ? "hover:bg-gray-200 text-primary"
           : "bg-primary hover:bg-[#0055bb] text-white",
@@ -33,10 +33,10 @@ const ButtonWithIcon: React.FC<ButtonWithIconProps> = ({
       )}
       onClick={onClick}
     >
-      <span className="flex items-center">{icon}</span>
+      {icon && <span className="flex items-center">{icon}</span>}
       <span className="flex items-center leading-none">{text}</span>
     </button>
   );
 };
 
-export default ButtonWithIcon;
+export default Button;

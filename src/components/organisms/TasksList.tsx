@@ -1,5 +1,5 @@
 import React from "react";
-import ButtonWithIcon from "../atoms/ButtonWithIcon";
+import Button from "../atoms/Button";
 import { Plus } from "lucide-react";
 import { useTaskModal } from "../../hooks/useTaskModal";
 
@@ -28,7 +28,7 @@ const TasksList: React.FC<TasksListProps> = ({ title, status, children }) => {
           ? children
           : "No tasks yet. Click the 'Add Task' button to add a task."}
         <div className="flex justify-center items-center p-2 rounded-lg cursor-pointer">
-          <ButtonWithIcon
+          <Button
             bg="no-bg"
             icon={<Plus size={20} />}
             text="Create Task"

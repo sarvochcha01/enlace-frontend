@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNotifications } from "../../hooks/useNotification";
 import NotificationCard from "../molecules/NotificationCard";
+import { usePopup } from "../../hooks/usePopup";
 
 const Notifications: React.FC = () => {
   const { notifications, fetchNotifications } = useNotifications();

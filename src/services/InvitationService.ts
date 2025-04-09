@@ -33,4 +33,59 @@ export class InvitationService {
       throw backendError;
     }
   }
+
+  static async IsInvitedToProject(projectId: string): Promise<any> {
+    const token = await getIdToken();
+    if (!token) {
+      throw new Error("No authentication token available. Please log in.");
+    }
+    try {
+      const res = await axios.get(
+        `${baseUrl}/invitations/join-project/${projectId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (!res || res.status !== 200) {
+        throw new Error("Backend project invitation failed");
+      }
+
+      return res?.data;
+    } catch (backendError) {
+      throw backendError;
+    }
+  }
+
+  static async UpdateInvitationStatus(
+    invitationId: string,
+    projectId: string,
+    status: "accepted" | "declined"
+  ): Promise<any> {
+    const token = await getIdToken();
+    if (!token) {
+      throw new Error("No authentication token available. Please log in.");
+    }
+    try {
+      const res = await axios.put(
+        `${baseUrl}/invitations/${invitationId}`,
+        {
+          id: invitationId,
+          projectId,
+          status: "declined",
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (!res || res.status !== 200) {
+        throw new Error("Backend project invitation failed");
+      }
+
+      return res?.data;
+    } catch (backendError) {
+      throw backendError;
+    }
+  }
 }

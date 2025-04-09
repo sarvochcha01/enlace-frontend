@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { useProject } from "../../hooks/useProject";
 import NameBubble from "../atoms/NameBubble";
 import { Plus, X } from "lucide-react";
-import ButtonWithIcon from "../atoms/ButtonWithIcon";
+import Button from "../atoms/Button";
 import { InvitationService } from "../../services/InvitationService";
 import { useToast } from "../../hooks/useToast";
 
@@ -138,14 +138,14 @@ const InviteMemberModal: React.FC<InviteMemberModalProps> = ({ onClose }) => {
         </div>
 
         <div className="mt-4 flex gap-4 justify-end">
-          <ButtonWithIcon
+          <Button
             icon={<X size={20} />}
             text="Cancel"
             onClick={onClose}
             bg="no-bg"
           />
 
-          <ButtonWithIcon
+          <Button
             icon={<Plus size={20} />}
             text={`Add ${selectedMember?.name || "Member"}`}
             onClick={handleInvite}

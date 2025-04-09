@@ -31,7 +31,8 @@ import Health from "./components/pages/status/Health.tsx";
 import Notifications from "./components/pages/Notifications.tsx";
 import { NotificationProvider } from "./context/NotificationContext.tsx";
 import TaskDetails from "./components/pages/tasks/TaskDetails.tsx";
-import JoinProject from "./components/pages/project/JoinProject.tsx";
+import JoinProject from "./components/modals/JoinProject.tsx";
+import { PopupProvider } from "./context/PopupContext.tsx";
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const { user, loading } = useAuth();
@@ -63,7 +64,6 @@ const router = createBrowserRouter(
         <Route index element={<Dashboard />} />
         <Route path="projects" element={<Outlet />}>
           <Route index element={<ProjectList />} />
-          <Route path=":projectId/join" element={<JoinProject />} />
           <Route
             path=":projectId"
             element={
@@ -74,9 +74,10 @@ const router = createBrowserRouter(
               </ProjectProvider>
             }
           >
-            <Route index element={<ProjectDetails />} />
+            <Route path="" element={<ProjectDetails />}>
+              <Route path="tasks/:taskId" element={<TaskDetails />} />
+            </Route>
             <Route path="settings" element={<ProjectSettings />} />
-            <Route path="tasks/:taskId" element={<TaskDetails />} />
           </Route>
         </Route>
         <Route path="notifications" element={<Notifications />} />
@@ -93,9 +94,11 @@ createRoot(document.getElementById("root")!).render(
     <AuthProvider>
       <NotificationProvider>
         <ToastProvider>
-          <UserProvider>
-            <RouterProvider router={router} />
-          </UserProvider>
+          <PopupProvider>
+            <UserProvider>
+              <RouterProvider router={router} />
+            </UserProvider>
+          </PopupProvider>
         </ToastProvider>
       </NotificationProvider>
     </AuthProvider>

@@ -36,6 +36,7 @@ export const NotificationProvider: React.FC<{
       const { data } = await axios.get(`${baseUrl}/notifications`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      console.log("Fetched notifications:", data);
       setNotifications(data);
       setUnreadCount(
         data.filter((n: Notification) => n.status === "unread").length

@@ -1,5 +1,5 @@
 import { LoaderCircle, Send, Edit, Trash2, X } from "lucide-react";
-import ButtonWithIcon from "./ButtonWithIcon";
+import Button from "./Button";
 import React, { useEffect, useRef, useState } from "react";
 import { cn } from "../../utils/tailwindMerge";
 import { CommentService } from "../../services/CommentService";
@@ -177,7 +177,7 @@ const CommentArea: React.FC<CommentAreaProps> = ({
 
             {isEditing && (
               <div className="flex justify-end gap-2 mt-2">
-                <ButtonWithIcon
+                <Button
                   icon={<X size={16} />}
                   text="Cancel"
                   bg="no-bg"
@@ -186,7 +186,7 @@ const CommentArea: React.FC<CommentAreaProps> = ({
                     setCommentText("");
                   }}
                 />
-                <ButtonWithIcon
+                <Button
                   icon={
                     isLoading ? (
                       <LoaderCircle size={16} className="animate-spin" />
@@ -213,13 +213,13 @@ const CommentArea: React.FC<CommentAreaProps> = ({
                   autoFocus
                 />
                 <div className="flex justify-end gap-2 mt-2">
-                  <ButtonWithIcon
+                  <Button
                     icon={<X size={16} />}
                     text="Cancel"
                     bg="no-bg"
                     onClick={() => setIsEditing(false)}
                   />
-                  <ButtonWithIcon
+                  <Button
                     icon={
                       isLoading ? (
                         <LoaderCircle size={16} className="animate-spin" />
@@ -241,13 +241,13 @@ const CommentArea: React.FC<CommentAreaProps> = ({
 
                 {isSelfComment && (
                   <div className="flex justify-end gap-2 mt-2">
-                    <ButtonWithIcon
+                    <Button
                       icon={<Edit size={16} />}
                       text="Edit"
                       bg="no-bg"
                       onClick={() => setIsEditing(true)}
                     />
-                    <ButtonWithIcon
+                    <Button
                       icon={
                         isDeleting ? (
                           <LoaderCircle size={16} className="animate-spin" />

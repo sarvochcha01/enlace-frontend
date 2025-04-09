@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ProjectService } from "../../../services/ProjectService";
 import { ProjectResponseDTO } from "../../../models/dtos/Project";
-import ButtonWithIcon from "../../atoms/ButtonWithIcon";
+import Button from "../../atoms/Button";
 import { Check, Plus } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
 import { useToast } from "../../../hooks/useToast";
@@ -54,7 +54,7 @@ const ProjectList = () => {
     <div className="flex flex-col gap-2 w-full">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl">Projects</h2>
-        <ButtonWithIcon
+        <Button
           icon={<Plus size={20} />}
           text="Create Project"
           onClick={() => setIsCreatePopupModalOpen(true)}

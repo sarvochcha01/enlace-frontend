@@ -9,7 +9,7 @@ import {
 import { FC, useState } from "react";
 import { Link } from "react-router-dom";
 import { useToast } from "../../../hooks/useToast";
-import ButtonWithIcon from "../../atoms/ButtonWithIcon";
+import Button from "../../atoms/Button";
 import SearchBar from "../../atoms/SearchBar";
 import { useNotifications } from "../../../hooks/useNotification";
 
@@ -47,7 +47,7 @@ const NavigationBar: FC<NavigationBarProps> = ({
             setSearchQuery={setSearchKeyword}
           />
         </div>
-        <ButtonWithIcon
+        <Button
           icon={<Plus size={20} />}
           text="Create"
           onClick={() =>

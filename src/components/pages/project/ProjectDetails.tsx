@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 
 import SearchBar from "../../atoms/SearchBar";
 import NameBubble from "../../atoms/NameBubble";
 import TasksList from "../../organisms/TasksList";
 import TaskHeadingCard from "../../atoms/TaskHeadingCard";
 
-import ButtonWithIcon from "../../atoms/ButtonWithIcon";
+import Button from "../../atoms/Button";
 import { Plus, Settings } from "lucide-react";
 import { useTaskModal } from "../../../hooks/useTaskModal";
 import TaskModal from "../../modals/TaskModal";
@@ -20,6 +20,8 @@ const ProjectDetails = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [assignedToFilter, setAssignedToFilter] = useState("");
+
+  const { projectId, taskId } = useParams();
 
   const [filters, setFilters] = useState<ProjectFilters | null>(null);
   const [filteredTasks, setFilteredTasks] = useState<TaskResponseDTO[] | null>(
@@ -37,6 +39,12 @@ const ProjectDetails = () => {
   } = useProject();
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (taskId && projectId) {
+      openTaskModal("display", "todo", taskId);
+    }
+  }, [taskId, projectId]);
 
   useEffect(() => {
     if (!project) return;
@@ -133,7 +141,7 @@ const ProjectDetails = () => {
           </div>
 
           <div>
-            <ButtonWithIcon
+            <Button
               icon={<Plus size={20} />}
               text="Create Task"
               onClick={() => openTaskModal("add", "todo")}
@@ -202,6 +210,7 @@ const ProjectDetails = () => {
           <TaskModal
             closeModal={() => {
               closeTaskModal();
+              navigate(`/projects/${projectId}`);
             }}
           />
         )}

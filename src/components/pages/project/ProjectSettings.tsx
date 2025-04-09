@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import ButtonWithIcon from "../../atoms/ButtonWithIcon";
+import Button from "../../atoms/Button";
 import { Check, ChevronLeft, LogOut, Plus, Trash } from "lucide-react";
 import { useProject } from "../../../hooks/useProject";
 import { ProjectService } from "../../../services/ProjectService";
@@ -148,7 +148,7 @@ const ProjectSettings = () => {
         />
 
         {!isProjectCreator && (
-          <ButtonWithIcon
+          <Button
             icon={<LogOut size={20} />}
             text="Leave Project"
             onClick={leaveProject}
@@ -181,7 +181,7 @@ const ProjectSettings = () => {
           />
 
           {projectMember?.role === "owner" && (
-            <ButtonWithIcon
+            <Button
               icon={<Check size={20} />}
               text="Save"
               className="w-48"
@@ -196,7 +196,7 @@ const ProjectSettings = () => {
         <h2 className="text-lg font-semibold">Members</h2>
 
         {isOwner && (
-          <ButtonWithIcon
+          <Button
             icon={<Plus size={20} />}
             text="Add People"
             className="w-48 mt-2"
@@ -229,7 +229,7 @@ const ProjectSettings = () => {
       </div>
 
       {isProjectCreator && (
-        <ButtonWithIcon
+        <Button
           icon={<Trash size={20} />}
           text="Delete Project"
           onClick={handleDeleteProject}
