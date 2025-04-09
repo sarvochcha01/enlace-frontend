@@ -31,6 +31,7 @@ import Health from "./components/pages/status/Health.tsx";
 import Notifications from "./components/pages/Notifications.tsx";
 import { NotificationProvider } from "./context/NotificationContext.tsx";
 import TaskDetails from "./components/pages/tasks/TaskDetails.tsx";
+import JoinProject from "./components/pages/project/JoinProject.tsx";
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const { user, loading } = useAuth();
@@ -62,6 +63,7 @@ const router = createBrowserRouter(
         <Route index element={<Dashboard />} />
         <Route path="projects" element={<Outlet />}>
           <Route index element={<ProjectList />} />
+          <Route path=":projectId/join" element={<JoinProject />} />
           <Route
             path=":projectId"
             element={

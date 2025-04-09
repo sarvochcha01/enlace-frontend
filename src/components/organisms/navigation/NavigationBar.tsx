@@ -25,7 +25,7 @@ const NavigationBar: FC<NavigationBarProps> = ({
   const [searchKeyword, setSearchKeyword] = useState("");
   const [isSearching, setIsSearching] = useState(false);
 
-  // const { unreadCount } = useNotifications();
+  const { unreadCount } = useNotifications();
   const { showToast } = useToast();
 
   return (
@@ -58,13 +58,13 @@ const NavigationBar: FC<NavigationBarProps> = ({
         />
       </div>
       <div className="w-1/5 h-full flex items-center justify-end gap-4 pr-4">
-        <Link to="notifications">
+        <Link to="notifications" className="relative">
           <Bell size={20} />
-          {/* {unreadCount > 0 && (
-            <span className="absolute bg-red-500 text-white rounded-full px-1 text-xs">
+          {unreadCount > 0 && (
+            <span className="absolute w-4 h-4 bg-red-500 text-white rounded-full px-1 text-xs -top-2 -right-1">
               {unreadCount}
             </span>
-          )} */}
+          )}
         </Link>
         <Link to="settings">
           <Settings size={20} />

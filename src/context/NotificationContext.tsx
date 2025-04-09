@@ -25,6 +25,11 @@ export const NotificationProvider: React.FC<{
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchNotifications = async () => {
+    if (!user) {
+      console.log("No user, skipping notifications fetch");
+      return;
+    }
+
     try {
       const token = await getIdToken();
       if (!token) return;
@@ -36,7 +41,7 @@ export const NotificationProvider: React.FC<{
         data.filter((n: Notification) => n.status === "unread").length
       );
     } catch (error) {
-      console.error("Error fetching notifications:", error);
+      console.log("Error fetching notifications:", error);
     }
   };
 

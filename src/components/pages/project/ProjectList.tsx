@@ -7,7 +7,7 @@ import { AnimatePresence } from "framer-motion";
 import { useToast } from "../../../hooks/useToast";
 import CreateProjectModal from "../../modals/CreateProjectModal";
 import { useNavigate } from "react-router-dom";
-import ProjectCard from "../../atoms/ProjectCard";
+import ProjectCard from "../../molecules/ProjectCard";
 
 const ProjectList = () => {
   const [projects, setProjects] = useState<ProjectResponseDTO[]>([]);
@@ -31,6 +31,7 @@ const ProjectList = () => {
     try {
       const projects = await ProjectService.getProjects();
       setProjects(projects || []);
+      console.log("Projects fetched successfully:", projects);
     } catch (error) {
       console.error("Error fetching projects:", error);
       showToast("Error fetching projects", { type: "error" });
@@ -60,7 +61,7 @@ const ProjectList = () => {
         />
       </div>
 
-      <div className="flex ">
+      <div className="grid grid-cols-3 gap-4">
         {projects.map((project) => (
           <ProjectCard
             key={project.id}

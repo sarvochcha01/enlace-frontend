@@ -12,6 +12,9 @@ export interface ProjectResponseDTO {
   invitations: InvitationResponseDTO[];
   projectMembers: ProjectMemberResponseDTO[];
   tasks: TaskResponseDTO[];
+  tasksCompleted: number;
+  totalTasks: number;
+  activeTasksAssignedToUserCount: number;
   createdAt: string;
   updatedAt: string;
 }
