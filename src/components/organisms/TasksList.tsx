@@ -2,6 +2,7 @@ import React from "react";
 import Button from "../atoms/Button";
 import { Plus } from "lucide-react";
 import { useTaskModal } from "../../hooks/useTaskModal";
+import { useProject } from "../../hooks/useProject";
 
 interface TasksListProps {
   title: string;
@@ -11,6 +12,7 @@ interface TasksListProps {
 
 const TasksList: React.FC<TasksListProps> = ({ title, status, children }) => {
   const { openTaskModal } = useTaskModal();
+  const { projectMember } = useProject();
 
   return (
     <div className="flex w-64 shrink-0 flex-col relative">
@@ -24,17 +26,17 @@ const TasksList: React.FC<TasksListProps> = ({ title, status, children }) => {
       </div>
 
       <div className="border h-full bg-gray-100 p-2 flex flex-col gap-2">
-        {React.Children.count(children) > 0
-          ? children
-          : "No tasks yet. Click the 'Add Task' button to add a task."}
-        <div className="flex justify-center items-center p-2 rounded-lg cursor-pointer">
-          <Button
-            bg="no-bg"
-            icon={<Plus size={20} />}
-            text="Create Task"
-            onClick={() => openTaskModal("add", status)}
-          />
-        </div>
+        {React.Children.count(children) > 0 ? children : ""}
+        {projectMember?.role !== "viewer" && (
+          <div className="flex justify-center items-center p-2 rounded-lg cursor-pointer">
+            <Button
+              bg="no-bg"
+              icon={<Plus size={20} />}
+              text="Create Task"
+              onClick={() => openTaskModal("add", status)}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
