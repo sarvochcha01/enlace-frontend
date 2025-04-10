@@ -4,7 +4,7 @@ import { NavLink, useNavigate, useParams } from "react-router-dom";
 import SearchBar from "../../atoms/SearchBar";
 import NameBubble from "../../atoms/NameBubble";
 import TasksList from "../../organisms/TasksList";
-import TaskHeadingCard from "../../atoms/TaskHeadingCard";
+import TaskHeadingCard from "../../molecules/TaskHeadingCard";
 
 import Button from "../../atoms/Button";
 import { Plus, Settings } from "lucide-react";
@@ -20,6 +20,7 @@ const ProjectDetails = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [assignedToFilter, setAssignedToFilter] = useState("");
+  const [shouldRefetch, setShouldRefetch] = useState(false);
 
   const { projectId, taskId } = useParams();
 
@@ -155,6 +156,7 @@ const ProjectDetails = () => {
           <TasksList title="To Do" status="todo">
             {(filteredTasks || project?.tasks)
               ?.filter((task) => task.status === "todo")
+              .reverse()
               .map((task) => (
                 <TaskHeadingCard
                   key={task.id}
@@ -172,6 +174,7 @@ const ProjectDetails = () => {
           <TasksList title="In Progress" status="in-progress">
             {(filteredTasks || project?.tasks)
               ?.filter((task) => task.status === "in-progress")
+              .reverse()
               .map((task) => (
                 <TaskHeadingCard
                   key={task.id}
@@ -189,6 +192,7 @@ const ProjectDetails = () => {
           <TasksList title="Completed" status="completed">
             {(filteredTasks || project?.tasks)
               ?.filter((task) => task.status === "completed")
+              .reverse()
               .map((task) => (
                 <TaskHeadingCard
                   key={task.id}
@@ -205,10 +209,18 @@ const ProjectDetails = () => {
         </div>
       </div>
 
-      <AnimatePresence onExitComplete={refetchProject}>
+      <AnimatePresence
+        onExitComplete={() => {
+          if (shouldRefetch) {
+            refetchProject();
+            setShouldRefetch(false);
+          }
+        }}
+      >
         {isTaskModalOpen && (
           <TaskModal
-            closeModal={() => {
+            closeModal={(wasChanged = false) => {
+              if (wasChanged) setShouldRefetch(true);
               closeTaskModal();
               navigate(`/projects/${projectId}`);
             }}

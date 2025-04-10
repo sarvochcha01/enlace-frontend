@@ -68,6 +68,7 @@ const FormInputField = <T extends FieldValues>({
           className={cn(
             "border rounded-lg p-2 mt-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary w-48",
             error ? "border-red-500 " : "border-gray-400 ",
+
             className
           )}
           {...rest}

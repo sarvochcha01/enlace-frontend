@@ -40,7 +40,7 @@ const TaskHeadingCard: React.FC<TaskHeadingCardProps> = ({
 
   return (
     <button
-      className="w-full bg-white p-3 rounded-lg border border-gray-200 shadow-sm hover:shadow transition-shadow cursor-pointer "
+      className="w-full bg-white p-3  border border-gray-200 shadow-sm hover:shadow transition-shadow cursor-pointer "
       onClick={() => navigate(`tasks/${id}`)}
     >
       <div className="flex justify-between items-start mb-2">

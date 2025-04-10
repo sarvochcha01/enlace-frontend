@@ -18,6 +18,8 @@ export const getNameColor = (name: string): string => {
     "bg-orange-500",
   ];
 
+  console.log("Name:", name);
+
   // Generate a hash code from the name string
   let hash = 0;
   for (let i = 0; i < name.length; i++) {

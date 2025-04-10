@@ -22,7 +22,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
 
   return (
     <div
-      className="  bg-white border rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200 cursor-pointer"
+      className="  bg-white border  shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200 cursor-pointer"
       onClick={onClick}
     >
       <div className="p-5">

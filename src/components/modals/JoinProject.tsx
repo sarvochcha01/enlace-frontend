@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { InvitationService } from "../../services/InvitationService";
 import Button from "../atoms/Button";
 import { useToast } from "../../hooks/useToast";
+import { motion } from "framer-motion";
 
 interface JoinProjectParams {
   projectId: string;
@@ -19,7 +20,13 @@ const JoinProject: React.FC<JoinProjectParams> = ({
   const { showToast } = useToast();
 
   return (
-    <div className="bg-white border-l-4 border-primary shadow-md p-6  w-96">
+    <motion.div
+      className="bg-white border-l-4 border-primary shadow-md p-6  w-96"
+      initial={{ y: 20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      exit={{ y: 20, opacity: 0 }}
+      transition={{ duration: 0.15 }}
+    >
       <div className="mb-6">
         <h1 className="text-xl font-medium text-gray-800">
           Project Invitation
@@ -89,7 +96,7 @@ const JoinProject: React.FC<JoinProjectParams> = ({
           }}
         />
       </div>
-    </div>
+    </motion.div>
   );
 };
 

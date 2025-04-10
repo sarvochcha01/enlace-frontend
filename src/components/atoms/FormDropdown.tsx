@@ -15,6 +15,7 @@ type FormDropdownProps<T extends FieldValues> = {
   helperText?: string;
   flexDir?: "row" | "col";
   className?: string;
+  disabled?: boolean;
 };
 
 const FormDropdown = <T extends FieldValues>({
@@ -27,6 +28,7 @@ const FormDropdown = <T extends FieldValues>({
   helperText,
   flexDir = "col",
   className,
+  disabled = false,
 }: FormDropdownProps<T>) => {
   return (
     <div
@@ -43,6 +45,7 @@ const FormDropdown = <T extends FieldValues>({
         className={`border rounded-lg p-2 mt-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary w-48 ${
           error ? "border-red-500" : "border-gray-400"
         } ${className}`}
+        disabled={disabled}
       >
         {Object.entries(options).map(([key, value]) => (
           <option key={key} value={key}>

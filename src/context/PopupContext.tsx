@@ -1,4 +1,5 @@
 import React, { createContext, useState } from "react";
+import { AnimatePresence } from "framer-motion";
 
 export interface PopupContextType {
   setPopupContent: (newContent: React.ReactNode) => void;
@@ -18,20 +19,22 @@ export const PopupProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <PopupContext.Provider value={{ setPopupContent, setIsPopupVisible }}>
       {children}
-      {isPopupVisible && content && (
-        <div
-          className="fixed inset-0 flex items-center justify-center z-50 bg-black/50"
-          onClick={() => setIsPopupVisible(false)}
-        >
+      <AnimatePresence>
+        {isPopupVisible && content && (
           <div
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
+            className="fixed inset-0 flex items-center justify-center z-50 bg-black/50"
+            onClick={() => setIsPopupVisible(false)}
           >
-            {content}
+            <div
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              {content}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
     </PopupContext.Provider>
   );
 };
