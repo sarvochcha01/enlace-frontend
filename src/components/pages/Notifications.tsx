@@ -15,7 +15,8 @@ const Notifications: React.FC = () => {
   }, []);
 
   return (
-    <div>
+    <div className="w-full h-full flex flex-col overflow-y-auto">
+      <h1 className="text-2xl mb-4">Recent Notifications</h1>
       {notifications.map((notification) => (
         <NotificationCard key={notification.id} notification={notification} />
       ))}

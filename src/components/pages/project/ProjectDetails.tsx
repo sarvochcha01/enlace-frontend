@@ -32,6 +32,7 @@ const ProjectDetails = () => {
   const { isTaskModalOpen, openTaskModal, closeTaskModal } = useTaskModal();
   const {
     project,
+    projectMember,
     setProject,
     setProjectMembers,
     setProjectMember,
@@ -141,13 +142,15 @@ const ProjectDetails = () => {
             </div>
           </div>
 
-          <div>
-            <Button
-              icon={<Plus size={20} />}
-              text="Create Task"
-              onClick={() => openTaskModal("add", "todo")}
-            />
-          </div>
+          {projectMember?.role !== "viewer" && (
+            <div>
+              <Button
+                icon={<Plus size={20} />}
+                text="Create Task"
+                onClick={() => openTaskModal("add", "todo")}
+              />
+            </div>
+          )}
         </div>
       </div>
 
