@@ -47,4 +47,20 @@ export class DashboardService {
 
         return res.data;
     };
+
+    static search = async (query: string) => {
+        const token = await getIdToken();
+        if (!token) {
+            throw new Error("No authentication token available. Please log in.");
+        }
+
+        const res = await axios.get(`${baseUrl}/dashboard/search?query=${encodeURIComponent(query)}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        console.log("Search results:", res.data);
+        return res.data;
+    }
 }

@@ -24,6 +24,7 @@ export interface TaskResponseDTO {
   createdBy: ProjectMemberResponseDTO;
   updatedBy: ProjectMemberResponseDTO;
   assignedTo?: ProjectMemberResponseDTO;
+  assignedToName?: string;
   title: string;
   taskNumber: number;
   description: string;
