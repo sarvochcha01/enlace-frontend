@@ -19,6 +19,7 @@ export interface TaskDTO {
 export interface TaskResponseDTO {
   id: string;
   projectId: string;
+  projectKey: string;
   projectName: string;
   createdBy: ProjectMemberResponseDTO;
   updatedBy: ProjectMemberResponseDTO;

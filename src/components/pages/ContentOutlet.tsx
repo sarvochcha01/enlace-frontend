@@ -63,7 +63,7 @@ const ContentOutlet = () => {
       <div className="flex">
         <AnimatePresence>{isSideNavPanelOpen && <SideNav />}</AnimatePresence>
         <div
-          className={`h-[calc(100svh-48px)] w-full p-2 border-t border-black ${
+          className={`h-[calc(100svh-48px)] w-full p-6 border-t border-black ${
             isSideNavPanelOpen ? "border-l rounded-tl-lg" : ""
           }`}
         >

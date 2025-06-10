@@ -47,7 +47,7 @@ const NavigationBar: FC<NavigationBarProps> = ({
             setSearchQuery={setSearchKeyword}
           />
         </div>
-        <Button
+        {/* <Button
           icon={<Plus size={20} />}
           text="Create"
           onClick={() =>
@@ -55,7 +55,7 @@ const NavigationBar: FC<NavigationBarProps> = ({
               type: "warning",
             })
           }
-        />
+        /> */}
       </div>
       <div className="w-1/5 h-full flex items-center justify-end gap-4 pr-4">
         <Link to="notifications" className="relative">

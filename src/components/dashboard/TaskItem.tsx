@@ -1,5 +1,10 @@
-// TaskItem.tsx
-import { Calendar, AlertTriangle, CheckCircle2 } from "lucide-react";
+import {
+  Calendar,
+  AlertTriangle,
+  Clock,
+  User,
+  FolderKanban,
+} from "lucide-react";
 import { FC } from "react";
 import { TaskResponseDTO } from "../../models/dtos/Task";
 import { formatDate } from "../../utils/dateUtils";
@@ -12,10 +17,16 @@ interface TaskItemProps {
 
 const TaskItem: FC<TaskItemProps> = ({ task, isCompleted = false }) => {
   const priorityColors = {
-    low: "bg-green-100 text-green-800",
-    medium: "bg-yellow-100 text-yellow-800",
-    high: "bg-red-100 text-red-800",
-    critical: "bg-red-800 text-white",
+    low: "bg-green-50 text-green-700 border-green-200",
+    medium: "bg-yellow-50 text-yellow-700 border-yellow-200",
+    high: "bg-orange-50 text-orange-700 border-orange-200",
+    critical: "bg-red-50 text-red-700 border-red-200",
+  };
+
+  const statusColors = {
+    completed: "bg-green-50 text-green-700",
+    "in-progress": "bg-blue-50 text-blue-700",
+    todo: "bg-gray-50 text-gray-700",
   };
 
   const getTaskStatusText = (status: string): string => {
@@ -27,59 +38,75 @@ const TaskItem: FC<TaskItemProps> = ({ task, isCompleted = false }) => {
       case "todo":
         return "To Do";
       default:
-        return "Unknown Status";
+        return "Unknown";
     }
   };
 
-  const renderDateInfo = (): JSX.Element => {
-    const isUrgent =
-      task.dueDate &&
-      new Date(task.dueDate) < new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
-
-    return (
-      <div
-        className={`col-span-2 flex items-center gap-2 ${
-          isUrgent ? "text-red-600" : "text-gray-600"
-        }`}
-      >
-        {isUrgent ? <AlertTriangle size={14} /> : <Calendar size={14} />}
-        {formatDate(task.dueDate)}
-      </div>
-    );
-  };
+  const isUrgent =
+    task.dueDate &&
+    new Date(task.dueDate) < new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
 
   return (
     <Link
       to={`/projects/${task.projectId}/tasks/${task.id}`}
-      className="grid grid-cols-12 py-3 px-2 rounded-lg hover:bg-gray-50 transition-colors items-center text-sm"
+      className="block hover:bg-gray-50 transition-colors"
     >
-      <div
-        className={`col-span-5 font-medium ${
-          isCompleted ? "line-through text-gray-500" : "text-gray-800"
-        }`}
-      >
-        {task.title}
+      <div className="px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-3 mb-2">
+              <h3
+                className={`font-medium truncate ${
+                  isCompleted ? "line-through text-gray-500" : "text-gray-900"
+                }`}
+              >
+                {task.title}{" "}
+                {task.projectKey
+                  ? `(${task.projectKey} - ${task.taskNumber})`
+                  : ""}
+              </h3>
+              {isUrgent && (
+                <AlertTriangle
+                  className="text-red-500 flex-shrink-0"
+                  size={16}
+                />
+              )}
+            </div>
+
+            <div className="flex items-center gap-4 text-sm text-gray-600">
+              <span className="flex items-center gap-1">
+                <FolderKanban size={14} />
+                {task.projectName}
+              </span>
+
+              <span className="flex items-center gap-1">
+                <Calendar size={14} />
+                {task.dueDate ? formatDate(task.dueDate) : "No Due Date"}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 ml-4">
+            <span
+              className={`px-2 py-1 text-xs font-medium rounded-md border ${
+                priorityColors[task.priority as keyof typeof priorityColors]
+              }`}
+            >
+              {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+            </span>
+
+            <span
+              className={`px-2 py-1 text-xs font-medium rounded-md ${
+                statusColors[
+                  task.status.toLowerCase() as keyof typeof statusColors
+                ] || "bg-gray-50 text-gray-700"
+              }`}
+            >
+              {getTaskStatusText(task.status)}
+            </span>
+          </div>
+        </div>
       </div>
-      <div
-        className={`col-span-2 ${
-          isCompleted ? "text-gray-400" : "text-gray-600"
-        }`}
-      >
-        {task.projectName}
-      </div>
-      <div className="col-span-2">
-        <span
-          className={`px-2 py-1 rounded-full text-xs font-medium ${
-            isCompleted
-              ? "text-gray-500 bg-gray-100"
-              : priorityColors[task.priority]
-          }`}
-        >
-          {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
-        </span>
-      </div>
-      {renderDateInfo()}
-      <div className="col-span-1">{getTaskStatusText(task.status)}</div>
     </Link>
   );
 };

@@ -24,7 +24,7 @@ const Button: React.FC<ButtonProps> = ({
       type={type}
       disabled={disabled}
       className={cn(
-        "flex gap-1 items-center justify-center  px-4 py-2",
+        "flex gap-1 items-center justify-center  px-4 py-2 rounded-lg",
         bg == "no-bg"
           ? "hover:bg-gray-200 text-primary"
           : "bg-primary hover:bg-[#0055bb] text-white",
