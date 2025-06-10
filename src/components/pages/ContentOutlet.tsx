@@ -6,6 +6,7 @@ import { AnimatePresence } from "framer-motion";
 
 import { UserService } from "../../services/UserService";
 import { useUser } from "../../hooks/useUser";
+import Loading from "../atoms/Loading";
 
 const loader = async () => {
   return null;
@@ -51,7 +52,7 @@ const ContentOutlet = () => {
   }, []);
 
   if (isDBUserLoading) {
-    return <div>Loading DB User...</div>;
+    return <Loading />;
   }
 
   return (

@@ -31,14 +31,14 @@ import Health from "./components/pages/status/Health.tsx";
 import Notifications from "./components/pages/Notifications.tsx";
 import { NotificationProvider } from "./context/NotificationContext.tsx";
 import TaskDetails from "./components/pages/tasks/TaskDetails.tsx";
-import JoinProject from "./components/modals/JoinProject.tsx";
 import { PopupProvider } from "./context/PopupContext.tsx";
+import Loading from "./components/atoms/Loading.tsx";
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   if (!user) {
