@@ -123,8 +123,6 @@ const ProjectDetails = () => {
               <SearchBar
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
-                isSearching={isSearching}
-                setIsSearching={setIsSearching}
                 placeholder="Search tasks"
               />
             </div>
