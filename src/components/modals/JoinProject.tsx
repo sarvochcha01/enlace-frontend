@@ -68,28 +68,19 @@ const JoinProject: React.FC<JoinProjectParams> = ({
         <Button
           text=" Join Project"
           onClick={() => {
-            ProjectService.joinProject(projectId)
+            InvitationService.UpdateInvitationStatus(
+              notificationId,
+              projectId,
+              "accepted"
+            )
               .then(() => {
-                alert("You have joined the project successfully!");
-
-                InvitationService.UpdateInvitationStatus(
-                  notificationId,
-                  projectId,
-                  "accepted"
-                )
-                  .then(() => {
-                    alert("You have accepted the invitation.");
-                  })
-                  .catch((error) => {
-                    console.error("Error accepting invitation:", error);
-                    showToast("Error accepting invitation", {
-                      type: "error",
-                    });
-                  });
+                showToast("You have successfully joined the project", {
+                  type: "success",
+                });
               })
               .catch((error) => {
-                console.error("Error joining project:", error);
-                showToast("Error joining project", {
+                console.error("Error accepting invitation:", error);
+                showToast("Error accepting invitation", {
                   type: "error",
                 });
               });

@@ -136,27 +136,6 @@ export class ProjectService {
     return res.data;
   };
 
-  static joinProject = async (projectId: string): Promise<any> => {
-    const token = await getIdToken();
-
-    if (!token) {
-      throw new Error("No authentication token available. Please log in.");
-    }
-
-    const res = await axios.post(
-      `${baseUrl}/projects/${projectId}/join`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    console.log(res.data);
-    return res.data;
-  };
-
   static leaveProject = async (projectId: string): Promise<any> => {
     const token = await getIdToken();
 
