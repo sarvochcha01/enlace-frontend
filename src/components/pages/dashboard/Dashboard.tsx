@@ -56,7 +56,7 @@ const Dashboard = () => {
 
   return (
     <div className="flex flex-col overflow-y-auto h-full w-full bg-gray-50">
-      <div className="max-w-7xl mx-auto w-full">
+      <div className="mx-auto w-full">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-semibold text-gray-900 mb-2">
