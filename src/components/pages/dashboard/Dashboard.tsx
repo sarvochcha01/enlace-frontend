@@ -3,8 +3,11 @@ import { useUser } from "../../../hooks/useUser";
 import { DashboardService } from "../../../services/DashboardService";
 import { TaskResponseDTO } from "../../../models/dtos/Task";
 import TaskList from "../../dashboard/TaskList";
+import Loading from "../../atoms/Loading";
 
 const Dashboard = () => {
+  const [isLoading, setIsLoading] = useState(true);
+
   const { dbUser } = useUser();
 
   const getGreeting = () => {
@@ -49,14 +52,25 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    fetchRecentTasks();
-    fetchInProgressTasks();
-    fetchDeadlineTasks();
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        await fetchRecentTasks();
+        await fetchInProgressTasks();
+        await fetchDeadlineTasks();
+      } catch (error) {
+        console.error("Failed to fetch tasks:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
   return (
     <div className="flex flex-col overflow-y-auto h-full w-full bg-gray-50">
-      <div className="mx-auto w-full">
+      <div className=" mx-auto w-full">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-semibold text-gray-900 mb-2">
@@ -72,11 +86,17 @@ const Dashboard = () => {
           <TaskList
             tasks={deadlineTasks || []}
             heading="Approaching Deadlines"
+            loading={isLoading}
           />
-          <TaskList tasks={inProgressTasks || []} heading="Tasks in Progress" />
+          <TaskList
+            tasks={inProgressTasks || []}
+            heading="Tasks in Progress"
+            loading={isLoading}
+          />
           <TaskList
             tasks={recentTasks || []}
             heading="Recently Assigned Tasks"
+            loading={isLoading}
           />
         </div>
       </div>

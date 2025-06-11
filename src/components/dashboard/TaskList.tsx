@@ -5,9 +5,14 @@ import { TaskResponseDTO } from "../../models/dtos/Task";
 interface TaskListProps {
   tasks?: TaskResponseDTO[] | null;
   heading?: string;
+  loading?: boolean;
 }
 
-const TaskList: FC<TaskListProps> = ({ tasks = [], heading }) => {
+const TaskList: FC<TaskListProps> = ({
+  tasks = [],
+  heading,
+  loading = false,
+}) => {
   if (!Array.isArray(tasks) || tasks.length === 0) {
     return (
       <div className="bg-white rounded-lg border border-gray-200 p-6">
@@ -30,15 +35,19 @@ const TaskList: FC<TaskListProps> = ({ tasks = [], heading }) => {
           <h2 className="text-lg font-semibold text-gray-900">{heading}</h2>
         </div>
       )}
-      <div className="divide-y divide-gray-100">
-        {tasks.map((task) => (
-          <TaskItem
-            key={task.id}
-            task={task}
-            isCompleted={task.status === "completed"}
-          />
-        ))}
-      </div>
+      {loading ? (
+        <div className="w-full p-6">Loading...</div>
+      ) : (
+        <div className="divide-y divide-gray-100">
+          {tasks.map((task) => (
+            <TaskItem
+              key={task.id}
+              task={task}
+              isCompleted={task.status === "completed"}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
