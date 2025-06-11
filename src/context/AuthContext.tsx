@@ -1,19 +1,29 @@
 import {
+  createUserWithEmailAndPassword,
   GoogleAuthProvider,
   onAuthStateChanged,
+  signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
+  updateProfile,
   User,
   UserCredential,
+  getAdditionalUserInfo,
 } from "firebase/auth";
 import { createContext, useEffect, useState } from "react";
 import { auth } from "../firebaseConfig";
 import { setAuthInstance } from "../singletons/Auth";
+import { UserService } from "../services/UserService";
 
 export interface AuthContextType {
   user: User | null;
   loginWithGoogle: () => Promise<UserCredential>;
-  //   loginWithEmail: (email: string, password: string) => Promise<void>;
+  loginWithEmail: (email: string, password: string) => Promise<UserCredential>;
+  signupWithEmail: (
+    email: string,
+    password: string,
+    name: string
+  ) => Promise<UserCredential>;
   logout: () => Promise<void>;
   getIdToken: () => Promise<string>;
   loading: boolean;
@@ -30,7 +40,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(user);
       setLoading(false);
     });
-
     return unsubscribe;
   }, []);
 
@@ -39,6 +48,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setAuthInstance({
         user,
         loginWithGoogle,
+        loginWithEmail,
+        signupWithEmail,
         logout,
         getIdToken,
         loading,
@@ -46,10 +57,69 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [user]);
 
   const loginWithGoogle = async (): Promise<UserCredential> => {
-    const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: "select_account" });
+    try {
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: "select_account" });
+      const result = await signInWithPopup(auth, provider);
 
-    return await signInWithPopup(auth, provider);
+      const additionalUserInfo = getAdditionalUserInfo(result);
+      if (additionalUserInfo?.isNewUser) {
+        try {
+          await UserService.CreateUser(result.user);
+        } catch (error) {
+          console.error("Error creating user profile:", error);
+        }
+      }
+
+      return result;
+    } catch (error) {
+      console.error("Google login error:", error);
+      throw error;
+    }
+  };
+
+  const loginWithEmail = async (
+    email: string,
+    password: string
+  ): Promise<UserCredential> => {
+    try {
+      return await signInWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      console.error("Email login error:", error);
+      throw error;
+    }
+  };
+
+  const signupWithEmail = async (
+    email: string,
+    password: string,
+    name: string
+  ): Promise<UserCredential> => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      if (userCredential.user && name.trim()) {
+        await updateProfile(userCredential.user, {
+          displayName: name.trim(),
+        });
+        setUser({ ...userCredential.user, displayName: name.trim() });
+      }
+
+      try {
+        await UserService.CreateUser(userCredential.user);
+      } catch (error) {
+        console.error("Error creating user profile:", error);
+      }
+
+      return userCredential;
+    } catch (error) {
+      console.error("Email signup error:", error);
+      throw error;
+    }
   };
 
   const logout = async () => {
@@ -57,7 +127,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       await signOut(auth);
       setUser(null);
     } catch (error) {
-      console.error(error);
+      console.error("Logout error:", error);
+      throw error;
     }
   };
 
@@ -65,7 +136,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (!user) {
       throw new Error("No user is signed in");
     }
-
     try {
       return await user.getIdToken();
     } catch (error) {
@@ -76,7 +146,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, loginWithGoogle, logout, getIdToken, loading }}
+      value={{
+        user,
+        loginWithGoogle,
+        loginWithEmail,
+        signupWithEmail,
+        logout,
+        getIdToken,
+        loading,
+      }}
     >
       {children}
     </AuthContext.Provider>

@@ -2,16 +2,17 @@ import { useEffect, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../hooks/auth/useAuth";
-import { getAdditionalUserInfo, onAuthStateChanged } from "firebase/auth";
-import { UserService } from "../../../services/UserService";
+import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../../firebaseConfig";
+import { useToast } from "../../../hooks/useToast";
 
 const Login = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
-
   const navigate = useNavigate();
+
+  const { showToast } = useToast();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -19,86 +20,168 @@ const Login = () => {
         navigate("/");
       }
     });
-
     return () => {
       unsubscribe();
     };
-  }, []);
+  }, [navigate]);
 
-  const { loginWithGoogle } = useAuth();
+  const { loginWithGoogle, loginWithEmail } = useAuth();
 
   const handleGoogleLogin = async () => {
     try {
       setIsLoggingIn(true);
-
-      const result = await loginWithGoogle();
-
-      const additionalUserInfo = getAdditionalUserInfo(result);
-      console.log(additionalUserInfo);
-
-      if (additionalUserInfo?.isNewUser) {
-        try {
-          await UserService.CreateUser(result.user);
-          navigate("/");
-        } catch (error) {
-          console.error("Error creating user:", error);
-        }
-      } else {
-        navigate("/");
-      }
+      await loginWithGoogle();
     } catch (error) {
       console.error("Google login failed:", error);
+      showToast("Failed to sign in with Google. Please try again.", {
+        type: "error",
+      });
+    } finally {
+      setIsLoggingIn(false);
+    }
+  };
+
+  const handleEmailLogin = async () => {
+    if (!email.trim() || !password.trim()) {
+      return;
+    }
+
+    try {
+      setIsLoggingIn(true);
+      await loginWithEmail(email, password);
+    } catch (error) {
+      console.error("Email login failed:", error);
+      showToast(
+        "Failed to sign in. Please check your email and password and try again.",
+        {
+          type: "error",
+        }
+      );
     } finally {
       setIsLoggingIn(false);
     }
   };
 
   return (
-    <div className="flex w-screen h-screen justify-center items-center">
-      <div className=" w-96 flex flex-col items-center">
-        <div className="text-center text-5xl font-bold">Enlace</div>
-        <div className="flex flex-col gap-2 mt-6">
-          <input
-            type="text"
-            name=""
-            id=""
-            className="border border-black w-64 h-8 px-2"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <input
-            type="text"
-            name=""
-            id=""
-            className="border border-black w-64 h-8 px-2"
-            placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button
-            className="bg-[#0055cc] hover:bg-[#2b5da2] w-64 h-8 mt-2 text-white disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={isLoggingIn}
-            // onClick={handleEmailLogin}
-          >
-            Login
-          </button>
-        </div>
-        <div className="mt-6">Or continue with</div>
-        <div className="flex">
-          <button
-            className="border border-black w-64 h-8 mt-2 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={isLoggingIn}
-            onClick={handleGoogleLogin}
-          >
-            <FcGoogle size={30} />
-            <span className="">Google</span>
-          </button>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Enlace</h1>
+          <p className="text-gray-600">Sign in to your account</p>
         </div>
 
-        <Link to="/signup" className="mt-4">
-          Sign Up?
-        </Link>
+        <div className="bg-white py-8 px-6 shadow-sm border border-gray-200 rounded-lg">
+          <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Email address
+              </label>
+              <input
+                id="email"
+                type="email"
+                autoComplete="email"
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Password
+              </label>
+              <input
+                id="password"
+                type="password"
+                autoComplete="current-password"
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+
+            <button
+              type="button"
+              className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              disabled={isLoggingIn}
+              onClick={handleEmailLogin}
+            >
+              {isLoggingIn ? (
+                <div className="flex items-center">
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Signing in...
+                </div>
+              ) : (
+                "Sign in"
+              )}
+            </button>
+          </form>
+
+          <div className="mt-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">
+                  Or continue with
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <button
+              type="button"
+              className="w-full flex justify-center items-center px-4 py-2.5 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              disabled={isLoggingIn}
+              onClick={handleGoogleLogin}
+            >
+              <FcGoogle className="mr-3" size={20} />
+              Continue with Google
+            </button>
+          </div>
+        </div>
+
+        {/* Sign Up Link */}
+        <div className="text-center">
+          <span className="text-gray-600">Don't have an account? </span>
+          <Link
+            to="/signup"
+            className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
+          >
+            Sign up
+          </Link>
+        </div>
       </div>
     </div>
   );
