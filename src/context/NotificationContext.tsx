@@ -132,13 +132,34 @@ export const NotificationProvider: React.FC<{
     }
   };
 
+  const isNewUser = () => {
+    if (!user?.metadata?.creationTime) return false;
+    const creationTime = new Date(user.metadata.creationTime).getTime();
+    const now = Date.now();
+    return now - creationTime < 30000; // 30 seconds
+  };
+
   useEffect(() => {
     if (user) {
-      console.log(
-        "User authenticated, fetching notifications and connecting WebSocket"
-      );
-      fetchNotifications();
-      connectWebSocket();
+      console.log("User authenticated");
+
+      if (isNewUser()) {
+        console.log(
+          "New user detected, waiting 30 seconds before fetching notifications"
+        );
+        // Wait 30 seconds for new users
+        const timeout = setTimeout(() => {
+          console.log("Fetching notifications for new user after delay");
+          fetchNotifications();
+          connectWebSocket();
+        }, 30000);
+
+        return () => clearTimeout(timeout);
+      } else {
+        console.log("Existing user, fetching notifications immediately");
+        fetchNotifications();
+        connectWebSocket();
+      }
     } else {
       console.log("No user, closing WebSocket if open");
       if (websocketRef.current) {
