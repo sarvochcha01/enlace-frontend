@@ -106,7 +106,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         await updateProfile(userCredential.user, {
           displayName: name.trim(),
         });
-        setUser({ ...userCredential.user, displayName: name.trim() });
       }
 
       try {

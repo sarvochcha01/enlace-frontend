@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { baseUrl } from "../../../utils/utils";
+import { Link } from "react-router-dom";
 
 const Health = () => {
   const [isServerUp, setIsServerUp] = useState(false);

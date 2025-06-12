@@ -16,17 +16,6 @@ const Signup = () => {
 
   const { showToast } = useToast();
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        navigate("/");
-      }
-    });
-    return () => {
-      unsubscribe();
-    };
-  }, [navigate]);
-
   const handleGoogleSignup = async () => {
     try {
       setIsSigningUp(true);
@@ -49,6 +38,11 @@ const Signup = () => {
     try {
       setIsSigningUp(true);
       await signupWithEmail(email, password, name);
+      showToast("Account created successfully!", {
+        type: "success",
+      });
+
+      navigate("/");
     } catch (error) {
       console.error("Email signup failed:", error);
       showToast(
