@@ -61,15 +61,21 @@ const ProjectList = () => {
         />
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
-        {projects.map((project) => (
-          <ProjectCard
-            key={project.id}
-            project={project}
-            onClick={() => onProjectClicked(project.id)}
-          />
-        ))}
-      </div>
+      {projects.length === 0 ? (
+        <div className="mt-12 flex justify-center items-center">
+          No Projects to show. Create one
+        </div>
+      ) : (
+        <div className="grid grid-cols-3 gap-4">
+          {projects.map((project) => (
+            <ProjectCard
+              key={project.id}
+              project={project}
+              onClick={() => onProjectClicked(project.id)}
+            />
+          ))}
+        </div>
+      )}
 
       <AnimatePresence onExitComplete={onModalClosed}>
         {isCreatePopupModalOpen && (
