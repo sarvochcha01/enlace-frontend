@@ -131,7 +131,7 @@ const Loading = () => {
         {/* Enhanced loading text with typing effect */}
         <div className="text-center space-y-3">
           <h2 className="text-xl font-semibold text-slate-700">
-            Organizing your workspace
+            Setting up the workspace...
           </h2>
           <div className="flex items-center justify-center space-x-3">
             <div className="flex space-x-1">
@@ -150,13 +150,14 @@ const Loading = () => {
             </div>
             <div className="text-slate-500 font-medium overflow-hidden">
               <span className="inline-block animate-pulse">
-                Syncing boards, tasks, and team data
+                Syncing boards, tasks, and team data...
               </span>
             </div>
           </div>
-          <div>
-            <span className="inline-block text-slate-500">
-              This may take upto a minute
+          <div className="text-slate-500 text-sm">
+            <span className="inline-block">
+              This is hosted on a free-tier backend. If it was inactive, it may
+              take up to a minute to spin back up.
             </span>
           </div>
         </div>
